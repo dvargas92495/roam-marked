@@ -1,4 +1,4 @@
 # roam-marked
     
-    Description for roam-marked
+A Markdown parser for Roam-Flavored Markdown
     
