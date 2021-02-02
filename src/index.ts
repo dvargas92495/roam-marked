@@ -1,7 +1,7 @@
 import marked from "marked";
 
 const boldRegex = new RegExp("\\*\\*", "g");
-const italicsRegex = new RegExp("( _|^_)", "g");
+const italicsRegex = new RegExp("(?:([^a-zA-Z0-9])_|^_)", "g");
 const highlightRegex = new RegExp("\\^\\^", "g");
 
 marked.use({
@@ -28,9 +28,11 @@ const run = (text: string): string => {
       openingBold = !openingBold;
       return openingBold ? '<span class="rm-bold">' : "</span>";
     })
-    .replace(italicsRegex, (): string => {
+    .replace(italicsRegex, (_, preChar): string => {
       openingItalics = !openingItalics;
-      return openingItalics ? ' <span class="rm-italics">' : " </span>";
+      return openingItalics
+        ? `${preChar}<span class="rm-italics">`
+        : `${preChar}</span>`;
     });
 };
 

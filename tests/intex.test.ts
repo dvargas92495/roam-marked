@@ -6,7 +6,8 @@ test("Runs Default", () => {
 - A ^^highlighted^^ text
 - A ~~strikethrough~~ text
 - A **bolded ** text
-- An __italicized __ text`;
+- An __italicized __ text
+- __italicized __ text`;
   expect(run(md)).toBe(`<ul>
 <li>A <span class="rm-bold">bolded</span> text</li>
 <li>An <span class="rm-italics">italicized</span> text</li>
@@ -14,6 +15,7 @@ test("Runs Default", () => {
 <li>A <del>strikethrough</del> text</li>
 <li>A <span class="rm-bold">bolded </span> text</li>
 <li>An <span class="rm-italics">italicized </span> text</li>
+<li><span class="rm-italics">italicized </span> text</li>
 </ul>
 `);
 });
