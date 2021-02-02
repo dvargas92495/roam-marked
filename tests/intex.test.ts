@@ -10,12 +10,12 @@ test("Runs Default", () => {
 - __italicized __ text`;
   expect(run(md)).toBe(`<ul>
 <li>A <span class="rm-bold">bolded</span> text</li>
-<li>An <span class="rm-italics">italicized</span> text</li>
+<li>An <em class="rm-italics">italicized</em> text</li>
 <li>A <span class="rm-highlight">highlighted</span> text</li>
 <li>A <del>strikethrough</del> text</li>
 <li>A <span class="rm-bold">bolded </span> text</li>
-<li>An <span class="rm-italics">italicized </span> text</li>
-<li><span class="rm-italics">italicized </span> text</li>
+<li>An <em class="rm-italics">italicized </em> text</li>
+<li><em class="rm-italics">italicized </em> text</li>
 </ul>
 `);
 });

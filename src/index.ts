@@ -16,7 +16,7 @@ marked.use({
       });
     },
     strong: (text: string) => `<span class="rm-bold">${text}</span>`,
-    em: (text: string) => `<span class="rm-italics">${text}</span>`,
+    em: (text: string) => `<em class="rm-italics">${text}</em>`,
   },
 });
 
@@ -31,8 +31,8 @@ const run = (text: string): string => {
     .replace(italicsRegex, (_, preChar): string => {
       openingItalics = !openingItalics;
       return openingItalics
-        ? `${preChar}<span class="rm-italics">`
-        : `${preChar}</span>`;
+        ? `${preChar}<em class="rm-italics">`
+        : `${preChar}</em>`;
     });
 };
 
