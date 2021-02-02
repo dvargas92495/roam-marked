@@ -4,12 +4,16 @@ test("Runs Default", () => {
   const md = `- A **bolded** text
 - An __italicized__ text
 - A ^^highlighted^^ text
-- A ~~strikethrough~~ text`;
+- A ~~strikethrough~~ text
+- A **bolded ** text
+- An __italicized __ text`;
   expect(run(md)).toBe(`<ul>
-<li>A <strong>bolded</strong> text</li>
-<li>An <em>italicized</em> text</li>
+<li>A <span class="rm-bold">bolded</span> text</li>
+<li>An <span class="rm-italics">italicized</span> text</li>
 <li>A <span class="rm-highlight">highlighted</span> text</li>
 <li>A <del>strikethrough</del> text</li>
+<li>A <span class="rm-bold">bolded </span> text</li>
+<li>An <span class="rm-italics">italicized </span> text</li>
 </ul>
 `);
 });
