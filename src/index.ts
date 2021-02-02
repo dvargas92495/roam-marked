@@ -1,7 +1,7 @@
 import marked from "marked";
 
 const boldRegex = new RegExp("\\*\\*", "g");
-const italicsRegex = new RegExp("__", "g");
+const italicsRegex = new RegExp("( _|^_)", "g");
 const highlightRegex = new RegExp("\\^\\^", "g");
 
 marked.use({
@@ -23,14 +23,14 @@ marked.use({
         })
         .replace(italicsRegex, (): string => {
           openingItalics = !openingItalics;
-          return openingItalics ? '<span class="rm-italics">' : "</span>";
+          return openingItalics ? ' <span class="rm-italics">' : " </span>";
         });
     },
   },
 });
 
 const run = (text: string): string => {
-  return marked(text);
+  return marked(text.replace(new RegExp("__", "g"), "_"));
 };
 
 export default run;
