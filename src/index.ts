@@ -12,16 +12,19 @@ marked.use({
       let openingTag = false;
       let openingBold = false;
       let openingItalics = false;
-      return text.replace(highlightRegex, (): string => {
-        openingTag = !openingTag;
-        return openingTag ? '<span class="rm-highlight">' : "</span>";
-      }).replace(boldRegex, (): string => {
-        openingBold = !openingBold;
-        return openingBold ? '<span class="rm-bold">' : "</span>";
-      }).replace(italicsRegex, (): string => {
-        openingItalics = !openingItalics;
-        return openingItalics ? '<span class="rm-italics">' : "</span>";
-      });
+      return text
+        .replace(highlightRegex, (): string => {
+          openingTag = !openingTag;
+          return openingTag ? '<span class="rm-highlight">' : "</span>";
+        })
+        .replace(boldRegex, (): string => {
+          openingBold = !openingBold;
+          return openingBold ? '<span class="rm-bold">' : "</span>";
+        })
+        .replace(italicsRegex, (): string => {
+          openingItalics = !openingItalics;
+          return openingItalics ? '<span class="rm-italics">' : "</span>";
+        });
     },
   },
 });
