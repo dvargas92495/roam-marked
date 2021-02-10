@@ -20,10 +20,10 @@ marked.use({
   },
 });
 
-const run = (text: string): string => {
+const wrap = ({ text, fcn }: { text: string; fcn: (t: string) => string }) => {
   let openingBold = false;
   let openingItalics = false;
-  return marked(text.replace(new RegExp("__", "g"), "_"))
+  return fcn(text.replace(new RegExp("__", "g"), "_"))
     .replace(boldRegex, (): string => {
       openingBold = !openingBold;
       return openingBold ? '<span class="rm-bold">' : "</span>";
@@ -35,5 +35,17 @@ const run = (text: string): string => {
         : `${preChar}</em>`;
     });
 };
+
+const run = (text: string): string =>
+  wrap({
+    text,
+    fcn: marked,
+  });
+
+export const parseInline = (text: string): string =>
+  wrap({
+    text,
+    fcn: marked.parseInline,
+  });
 
 export default run;
