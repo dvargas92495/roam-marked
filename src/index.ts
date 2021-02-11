@@ -90,4 +90,4 @@ export const lexer = marked.lexer;
 
 export const parseInline = marked.parseInline;
 
-export default marked;
+export default (text: string): string => marked(text);
