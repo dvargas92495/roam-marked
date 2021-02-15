@@ -14,6 +14,35 @@ const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^)/;
 
 const TAG_REGEXES = [TODO_REGEX, DONE_REGEX, HIGHLIGHT_REGEX];
 
+// https://github.com/markedjs/marked/blob/d2347e9b9ae517d02138fa6a9844bd8d586acfeb/src/Tokenizer.js#L33-L59
+function indentCodeCompensation(raw: string, text: string) {
+  const matchIndentToCode = raw.match(/^(\s+)(?:```)/);
+
+  if (matchIndentToCode === null) {
+    return text;
+  }
+
+  const indentToCode = matchIndentToCode[1];
+
+  return text
+    .split('\n')
+    .map(node => {
+      const matchIndentInNode = node.match(/^\s+/);
+      if (matchIndentInNode === null) {
+        return node;
+      }
+
+      const [indentInNode] = matchIndentInNode;
+
+      if (indentInNode.length >= indentToCode.length) {
+        return node.slice(indentToCode.length);
+      }
+
+      return node;
+    })
+    .join('\n');
+}
+
 marked.use({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore should be optional
@@ -48,6 +77,26 @@ marked.use({
           type: "em",
           raw: emMatch[0],
           text: emMatch[1],
+        };
+      }
+      return false;
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore should accept boolean return value
+    fences(src) {
+      const newSrc = src.replace(/```$/, '\n```');
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore should accept boolean return value
+      const cap = this.rules.block.fences.exec(newSrc);
+      if (cap) {
+        const raw = cap[0];
+        const text = indentCodeCompensation(raw, cap[3] || '');
+  
+        return {
+          type: 'code',
+          raw,
+          lang: cap[2] ? cap[2].trim() : cap[2],
+          text
         };
       }
       return false;
