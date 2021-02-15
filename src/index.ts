@@ -25,8 +25,8 @@ function indentCodeCompensation(raw: string, text: string) {
   const indentToCode = matchIndentToCode[1];
 
   return text
-    .split('\n')
-    .map(node => {
+    .split("\n")
+    .map((node) => {
       const matchIndentInNode = node.match(/^\s+/);
       if (matchIndentInNode === null) {
         return node;
@@ -40,7 +40,7 @@ function indentCodeCompensation(raw: string, text: string) {
 
       return node;
     })
-    .join('\n');
+    .join("\n");
 }
 
 marked.use({
@@ -84,19 +84,19 @@ marked.use({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore should accept boolean return value
     fences(src) {
-      const newSrc = src.replace(/```$/, '\n```');
+      const newSrc = src.replace(/```$/, "\n```");
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore should accept boolean return value
       const cap = this.rules.block.fences.exec(newSrc);
       if (cap) {
         const raw = cap[0];
-        const text = indentCodeCompensation(raw, cap[3] || '');
-  
+        const text = indentCodeCompensation(raw, cap[3] || "");
+
         return {
-          type: 'code',
+          type: "code",
           raw,
           lang: cap[2] ? cap[2].trim() : cap[2],
-          text
+          text,
         };
       }
       return false;
