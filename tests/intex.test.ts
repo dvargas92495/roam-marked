@@ -53,3 +53,13 @@ console.log(&quot;block&quot;);
 </ul>
 `);
 });
+
+test("Runs buttons", () => {
+  const md = `- {{pull references}}`;
+
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(run(md)).toBe(`<ul>
+<li><button>pull references</button></li>
+</ul>
+`);
+});

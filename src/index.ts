@@ -7,12 +7,13 @@ const RENDERED_DONE =
 
 const TODO_REGEX = /^{{(?:\[\[)?TODO(?:\]\])?}}/;
 const DONE_REGEX = /^{{(?:\[\[)?DONE(?:\]\])?}}/;
+const BUTTON_REGEX = /^{{(?:\[\[)?([^}]*)(?:\]\])?}}/;
 const BOLD_REGEX = /^\*\*([^*]* )\*\*/;
 const ITALICS_REGEX = /^__([^_]*)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
 const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^)/;
 
-const TAG_REGEXES = [TODO_REGEX, DONE_REGEX, HIGHLIGHT_REGEX];
+const TAG_REGEXES = [TODO_REGEX, DONE_REGEX, HIGHLIGHT_REGEX, BUTTON_REGEX];
 
 // https://github.com/markedjs/marked/blob/d2347e9b9ae517d02138fa6a9844bd8d586acfeb/src/Tokenizer.js#L33-L59
 function indentCodeCompensation(raw: string, text: string) {
@@ -128,6 +129,9 @@ marked.use({
       } else if (HIGHLIGHT_REGEX.test(text)) {
         const match = HIGHLIGHT_REGEX.exec(text);
         return `<span class="rm-highlight">${match?.[1]}</span>`;
+      } else if (BUTTON_REGEX.test(text)) {
+        const match = BUTTON_REGEX.exec(text);
+        return `<button>${match?.[1]}</button>`;
       } else {
         return text;
       }
