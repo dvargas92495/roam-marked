@@ -7,7 +7,7 @@ const RENDERED_DONE =
 
 const TODO_REGEX = /^{{(?:\[\[)?TODO(?:\]\])?}}/;
 const DONE_REGEX = /^{{(?:\[\[)?DONE(?:\]\])?}}/;
-const BUTTON_REGEX = /^{{(?:\[\[)?([^}]*)(?:\]\])?}}/;
+const BUTTON_REGEX = /^{{((?:\[\[)?(?:(?!}}[^}]).)*(?:\]\])?)}}/;
 const BOLD_REGEX = /^\*\*([^*]* )\*\*/;
 const ITALICS_REGEX = /^__([^_]*)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;

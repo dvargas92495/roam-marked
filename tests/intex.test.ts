@@ -63,3 +63,13 @@ test("Runs buttons", () => {
 </ul>
 `);
 });
+
+test("Runs queries", () => {
+  const md = `- {{[[query]]: {and:{or:[[TODO]] [[DONE]]} [[January 26th, 2021]]}}}`;
+
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(run(md)).toBe(`<ul>
+<li><button>[[query]]: {and:{or:[[TODO]] [[DONE]]} [[January 26th, 2021]]}</button></li>
+</ul>
+`);
+});
