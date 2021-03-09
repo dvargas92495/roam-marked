@@ -189,7 +189,12 @@ marked.use(opts);
 
 export const lexer = marked.lexer;
 
-export const parseInline = marked.parseInline;
+export const parseInline = (text: string, context?: RoamContext): string => {
+  opts.tokenizer.context = () => ({
+    ...context,
+  });
+  return marked.parseInline(text);
+};
 
 type RoamContext = {
   pagesToHrefs?: (page: string) => string;
