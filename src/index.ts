@@ -130,7 +130,7 @@ const opts = {
           const raw = match[0];
           if (context.pagesToHrefs) {
             const text = match[1];
-            const href = context.pagesToHrefs[text];
+            const href = context.pagesToHrefs(text);
             if (href) {
               return {
                 type: "link",
@@ -192,7 +192,7 @@ export const lexer = marked.lexer;
 export const parseInline = marked.parseInline;
 
 type RoamContext = {
-  pagesToHrefs?: { [page: string]: string };
+  pagesToHrefs?: (page: string) => string;
 };
 
 export default (text: string, context?: RoamContext): string => {

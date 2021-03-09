@@ -79,11 +79,12 @@ test("Runs tags as links", () => {
 - Then #Vargas is my last name
 - This [[Page]] has no href`;
 
+  const pages = {
+    "Hello World": "/hello-world",
+    Vargas: "/asdfasdf",
+  } as { [key: string]: string };
   const context = {
-    pagesToHrefs: {
-      "Hello World": "/hello-world",
-      Vargas: "/asdfasdf",
-    },
+    pagesToHrefs: (tag: string) => pages[tag],
   };
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(run(md, context)).toBe(`<ul>
