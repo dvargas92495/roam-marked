@@ -73,3 +73,37 @@ test("Runs queries", () => {
 </ul>
 `);
 });
+
+test("Runs tags as links", () => {
+  const md = `- Started with [[Hello World]]
+- Then #Vargas is my last name
+- This [[Page]] has no href`;
+
+  const context = {
+    pagesToHrefs: {
+      "Hello World": "/hello-world",
+      Vargas: "/asdfasdf",
+    },
+  };
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(run(md, context)).toBe(`<ul>
+<li>Started with <a href="/hello-world">Hello World</a></li>
+<li>Then <a href="/asdfasdf">Vargas</a> is my last name</li>
+<li>This Page has no href</li>
+</ul>
+`);
+});
+
+test("Links without context is just text", () => {
+  const md = `- Started with [[Hello World]]
+- Then #Vargas is my last name
+- This [[Page]] has no href`;
+
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(run(md)).toBe(`<ul>
+<li>Started with [[Hello World]]</li>
+<li>Then #Vargas is my last name</li>
+<li>This [[Page]] has no href</li>
+</ul>
+`);
+});

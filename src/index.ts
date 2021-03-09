@@ -8,12 +8,15 @@ const RENDERED_DONE =
 const TODO_REGEX = /^{{(?:\[\[)?TODO(?:\]\])?}}/;
 const DONE_REGEX = /^{{(?:\[\[)?DONE(?:\]\])?}}/;
 const BUTTON_REGEX = /^{{((?:\[\[)?(?:(?!}}[^}]).)*(?:\]\])?)}}/;
+const TAG_REGEX = /^#?\[\[((?:(?!]][^]]).)*)\]\]/;
+const HASHTAG_REGEX = /^#([^\s]*)/;
 const BOLD_REGEX = /^\*\*([^*]* )\*\*/;
 const ITALICS_REGEX = /^__([^_]*)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
-const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^)/;
+const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s])/;
 
-const TAG_REGEXES = [TODO_REGEX, DONE_REGEX, HIGHLIGHT_REGEX, BUTTON_REGEX];
+const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX];
+const TAG_REGEXES = [TAG_REGEX, HASHTAG_REGEX];
 
 // https://github.com/markedjs/marked/blob/d2347e9b9ae517d02138fa6a9844bd8d586acfeb/src/Tokenizer.js#L33-L59
 function indentCodeCompensation(raw: string, text: string) {
@@ -44,14 +47,13 @@ function indentCodeCompensation(raw: string, text: string) {
     .join("\n");
 }
 
-marked.use({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore should be optional
+const opts = {
+  //marked.use({
   tokenizer: {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore should accept boolean return value
     tag(src) {
-      for (const r of TAG_REGEXES) {
+      for (const r of HTML_REGEXES) {
         const match = r.exec(src);
         if (match) {
           return {
@@ -84,11 +86,14 @@ marked.use({
     },
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore should accept boolean return value
-    fences(src) {
+    fences(src: string) {
       const newSrc = src.replace(/```$/, "\n```");
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore should accept boolean return value
-      const cap = this.rules.block.fences.exec(newSrc);
+      const rules = this.rules;
+      const cap = (rules.block.fences as RegExp).exec(
+        newSrc
+      ) as RegExpExecArray;
       if (cap) {
         const raw = cap[0];
         const text = indentCodeCompensation(raw, cap[3] || "");
@@ -115,6 +120,45 @@ marked.use({
       }
       return false;
     },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore should accept boolean return value
+    link(src) {
+      const context = this.context();
+      for (const r of TAG_REGEXES) {
+        const match = r.exec(src);
+        if (match) {
+          const raw = match[0];
+          if (context.pagesToHrefs) {
+            const text = match[1];
+            const href = context.pagesToHrefs[text];
+            if (href) {
+              return {
+                type: "link",
+                raw,
+                href,
+                text,
+              };
+            } else {
+              return {
+                type: "text",
+                raw,
+                text,
+              };
+            }
+          } else {
+            return {
+              type: "text",
+              raw,
+              text: raw,
+            };
+          }
+        }
+      }
+      return false;
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore should acce
+    context: () => ({} as RoamContext),
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore should be optional
@@ -137,10 +181,23 @@ marked.use({
       }
     },
   },
-});
+};
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore should accept boolean return value
+marked.use(opts);
 
 export const lexer = marked.lexer;
 
 export const parseInline = marked.parseInline;
 
-export default (text: string): string => marked(text);
+type RoamContext = {
+  pagesToHrefs?: { [page: string]: string };
+};
+
+export default (text: string, context?: RoamContext): string => {
+  opts.tokenizer.context = () => ({
+    ...context,
+  });
+  return marked(text);
+};
