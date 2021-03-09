@@ -8,7 +8,7 @@ const RENDERED_DONE =
 const TODO_REGEX = /^{{(?:\[\[)?TODO(?:\]\])?}}/;
 const DONE_REGEX = /^{{(?:\[\[)?DONE(?:\]\])?}}/;
 const BUTTON_REGEX = /^{{((?:\[\[)?(?:(?!}}[^}]).)*(?:\]\])?)}}/;
-const TAG_REGEX = /^#?\[\[((?:(?!]][^]]).)*)\]\]/;
+const TAG_REGEX = /^#?\[\[(.*?)\]\]/;
 const HASHTAG_REGEX = /^#([^\s]*)/;
 const BOLD_REGEX = /^\*\*([^*]* )\*\*/;
 const ITALICS_REGEX = /^__([^_]*)__/;
@@ -17,7 +17,7 @@ const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s])/;
 
 const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX];
 const TAG_REGEXES = [TAG_REGEX, HASHTAG_REGEX];
-
+let lastSrc = "";
 // https://github.com/markedjs/marked/blob/d2347e9b9ae517d02138fa6a9844bd8d586acfeb/src/Tokenizer.js#L33-L59
 function indentCodeCompensation(raw: string, text: string) {
   const matchIndentToCode = raw.match(/^(\s+)(?:```)/);
@@ -110,6 +110,10 @@ const opts = {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore should accept boolean return value
     inlineText(src) {
+      if (src === lastSrc) {
+        throw new Error(`Infinite loop on byte: ${src.charCodeAt(0)}`);
+      }
+      lastSrc = src;
       const match = INLINE_STOP_REGEX.exec(src);
       if (match) {
         return {
@@ -193,6 +197,7 @@ export const parseInline = (text: string, context?: RoamContext): string => {
   opts.tokenizer.context = () => ({
     ...context,
   });
+  lastSrc = "";
   return marked.parseInline(text);
 };
 
@@ -204,5 +209,6 @@ export default (text: string, context?: RoamContext): string => {
   opts.tokenizer.context = () => ({
     ...context,
   });
+  lastSrc = "";
   return marked(text);
 };

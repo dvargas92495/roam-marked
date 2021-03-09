@@ -108,3 +108,15 @@ test("Links without context is just text", () => {
 </ul>
 `);
 });
+
+test("Double tag on context", () => {
+  const md = `- Started with [[Hello World]] [[Page]]`;
+  const context = {
+    pagesToHrefs: (t: string) => `/${t.toLowerCase().replace(" ", "-")}`,
+  };
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(run(md, context)).toBe(`<ul>
+<li>Started with <a href="/hello-world">Hello World</a> <a href="/page">Page</a></li>
+</ul>
+`);
+});
