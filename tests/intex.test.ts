@@ -120,3 +120,12 @@ test("Double tag on context", () => {
 </ul>
 `);
 });
+
+test("Renders iframe", () => {
+  const md = `- {{iframe:https://givebutter.com/roamjs}}`;
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(run(md)).toBe(`<ul>
+<li><iframe src="https://givebutter.com/roamjs" frameborder="0" height="100%" width="100%"></iframe></li>
+</ul>
+`);
+});

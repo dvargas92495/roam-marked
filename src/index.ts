@@ -5,8 +5,12 @@ const RENDERED_TODO =
 const RENDERED_DONE =
   '<span><label class="check-container"><input type="checkbox" checked="" disabled=""><span class="checkmark"></span></label></span>';
 
+const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 const TODO_REGEX = /^{{(?:\[\[)?TODO(?:\]\])?}}/;
 const DONE_REGEX = /^{{(?:\[\[)?DONE(?:\]\])?}}/;
+const IFRAME_REGEX = new RegExp(
+  `^{{(?:\\[\\[)?iframe(?:\\]\\])?:(${URL_REGEX.source})}}`
+);
 const BUTTON_REGEX = /^{{((?:\[\[)?(?:(?!}}[^}]).)*(?:\]\])?)}}/;
 const TAG_REGEX = /^#?\[\[(.*?)\]\]/;
 const HASHTAG_REGEX = /^#([^\s]*)/;
@@ -174,6 +178,9 @@ const opts = {
         return RENDERED_TODO;
       } else if (DONE_REGEX.test(text)) {
         return RENDERED_DONE;
+      } else if (IFRAME_REGEX.test(text)) {
+        const match = IFRAME_REGEX.exec(text);
+        return `<iframe src="${match?.[1]}" frameborder="0" height="100%" width="100%"></iframe>`;
       } else if (HIGHLIGHT_REGEX.test(text)) {
         const match = HIGHLIGHT_REGEX.exec(text);
         return `<span class="rm-highlight">${match?.[1]}</span>`;
