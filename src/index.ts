@@ -136,7 +136,7 @@ const opts = {
         const match = XRegExp.matchRecursive(src, "#?\\[\\[", "\\]\\]", "i", {
           valueNames: ["between", "left", "match", "right"],
         });
-        const raw = match.map(m => m.value).join('');
+        const raw = match.map((m) => m.value).join("");
         if (context.pagesToHrefs) {
           const text = match[1].value;
           const href = context.pagesToHrefs(text);
@@ -230,7 +230,10 @@ marked.use(opts);
 type RoamContext = {
   pagesToHrefs?: (page: string) => string;
 };
-const contextualize = <T>(method: (text: string) => T) => (text: string, context?: RoamContext): T => {
+const contextualize = <T>(method: (text: string) => T) => (
+  text: string,
+  context?: RoamContext
+): T => {
   opts.tokenizer.context = () => ({
     ...context,
   });
