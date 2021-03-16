@@ -1,4 +1,5 @@
 import marked from "marked";
+import XRegExp from "xregexp";
 
 const RENDERED_TODO =
   '<span><label class="check-container"><input type="checkbox" disabled=""><span class="checkmark"></span></label></span>';
@@ -20,7 +21,6 @@ const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
 const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s])/;
 
 const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX];
-const TAG_REGEXES = [TAG_REGEX, HASHTAG_REGEX];
 let lastSrc = "";
 // https://github.com/markedjs/marked/blob/d2347e9b9ae517d02138fa6a9844bd8d586acfeb/src/Tokenizer.js#L33-L59
 function indentCodeCompensation(raw: string, text: string) {
@@ -132,34 +132,63 @@ const opts = {
     // @ts-ignore should accept boolean return value
     link(src) {
       const context = this.context();
-      for (const r of TAG_REGEXES) {
-        const match = r.exec(src);
-        if (match) {
-          const raw = match[0];
-          if (context.pagesToHrefs) {
-            const text = match[1];
-            const href = context.pagesToHrefs(text);
-            if (href) {
-              return {
-                type: "link",
-                raw,
-                href,
-                text,
-              };
-            } else {
-              return {
-                type: "text",
-                raw,
-                text,
-              };
-            }
+      if (TAG_REGEX.test(src)) {
+        const match = XRegExp.matchRecursive(src, "#?\\[\\[", "\\]\\]", "i", {
+          valueNames: ["between", "left", "match", "right"],
+        });
+        const raw = match.map(m => m.value).join('');
+        if (context.pagesToHrefs) {
+          const text = match[1].value;
+          const href = context.pagesToHrefs(text);
+          if (href) {
+            return {
+              type: "link",
+              raw,
+              href,
+              text,
+            };
           } else {
             return {
               type: "text",
               raw,
-              text: raw,
+              text,
             };
           }
+        } else {
+          return {
+            type: "text",
+            raw,
+            text: raw,
+          };
+        }
+      }
+
+      const hashMatch = HASHTAG_REGEX.exec(src);
+      if (hashMatch) {
+        const raw = hashMatch[0];
+        if (context.pagesToHrefs) {
+          const text = hashMatch[1];
+          const href = context.pagesToHrefs(text);
+          if (href) {
+            return {
+              type: "link",
+              raw,
+              href,
+              text,
+            };
+          } else {
+            return {
+              type: "text",
+              raw,
+              text,
+            };
+          }
+        } else {
+          return {
+            type: "text",
+            raw,
+            text: raw,
+          };
         }
       }
       return false;
@@ -198,24 +227,17 @@ const opts = {
 // @ts-ignore should accept boolean return value
 marked.use(opts);
 
-export const lexer = marked.lexer;
-
-export const parseInline = (text: string, context?: RoamContext): string => {
-  opts.tokenizer.context = () => ({
-    ...context,
-  });
-  lastSrc = "";
-  return marked.parseInline(text);
-};
-
 type RoamContext = {
   pagesToHrefs?: (page: string) => string;
 };
-
-export default (text: string, context?: RoamContext): string => {
+const contextualize = <T>(method: (text: string) => T) => (text: string, context?: RoamContext): T => {
   opts.tokenizer.context = () => ({
     ...context,
   });
   lastSrc = "";
-  return marked(text);
+  return method(text);
 };
+
+export const lexer = contextualize(marked.lexer);
+export const parseInline = contextualize(marked.parseInline);
+export default contextualize(marked);

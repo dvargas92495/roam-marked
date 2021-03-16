@@ -86,7 +86,7 @@ test("Runs tags as links", () => {
   const context = {
     pagesToHrefs: (tag: string) => pages[tag],
   };
-  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
   expect(run(md, context)).toBe(`<ul>
 <li>Started with <a href="/hello-world">Hello World</a></li>
 <li>Then <a href="/asdfasdf">Vargas</a> is my last name</li>
@@ -114,9 +114,32 @@ test("Double tag on context", () => {
   const context = {
     pagesToHrefs: (t: string) => `/${t.toLowerCase().replace(" ", "-")}`,
   };
-  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
   expect(run(md, context)).toBe(`<ul>
 <li>Started with <a href="/hello-world">Hello World</a> <a href="/page">Page</a></li>
+</ul>
+`);
+});
+
+test("Nested Links", () => {
+  const md = `- One type of [[[[Nested]] Links]]
+- And another [[Example [[Nested]] Link]]
+- A Final [[Link [[Nested]]]]`;
+  const pages = {
+    "[[Nested]] Links": "/start",
+    "Example [[Nested]] Link": "/middle",
+    "Link [[Nested]]": "/end",
+    Nested: "/nested",
+  } as { [key: string]: string };
+  const context = {
+    pagesToHrefs: (tag: string) => pages[tag],
+  };
+  
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
+  expect(run(md, context)).toBe(`<ul>
+<li>One type of <a href="/start"><a href="/nested">Nested</a> Links</a></li>
+<li>And another <a href="/middle">Example <a href="/nested">Nested</a> Link</a></li>
+<li>A Final <a href="/end">Link <a href="/nested">Nested</a></a></li>
 </ul>
 `);
 });
