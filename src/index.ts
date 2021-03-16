@@ -243,4 +243,4 @@ const contextualize = <T>(method: (text: string) => T) => (
 
 export const lexer = contextualize(marked.lexer);
 export const parseInline = contextualize(marked.parseInline);
-export default contextualize(marked);
+export default contextualize<string>(marked);
