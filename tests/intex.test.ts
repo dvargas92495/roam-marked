@@ -134,7 +134,7 @@ test("Nested Links", () => {
   const context = {
     pagesToHrefs: (tag: string) => pages[tag],
   };
-  
+
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
   expect(run(md, context)).toBe(`<ul>
 <li>One type of <a href="/start"><a href="/nested">Nested</a> Links</a></li>
@@ -149,6 +149,20 @@ test("Renders iframe", () => {
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(run(md)).toBe(`<ul>
 <li><iframe src="https://givebutter.com/roamjs" frameborder="0" height="100%" width="100%"></iframe></li>
+</ul>
+`);
+});
+
+test("Renders page aliases", () => {
+  const md = `- Resolve an alias [Page]([[Hello World]])
+- An invalid [alias](wat)`;
+  const context = {
+    pagesToHrefs: (t: string) => `/${t.toLowerCase().replace(" ", "-")}`,
+  };
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
+  expect(run(md, context)).toBe(`<ul>
+<li>Resolve an alias <a href="/hello-world">Page</a></li>
+<li>An invalid <a href="wat">alias</a></li>
 </ul>
 `);
 });

@@ -14,11 +14,12 @@ const IFRAME_REGEX = new RegExp(
 );
 const BUTTON_REGEX = /^{{((?:\[\[)?(?:(?!}}[^}]).)*(?:\]\])?)}}/;
 const TAG_REGEX = /^#?\[\[(.*?)\]\]/;
+const ALIAS_REGEX = new RegExp(`^\\[(.*?)\\]\\(${TAG_REGEX.source.substring(1)}\\)`);
 const HASHTAG_REGEX = /^#([^\s]*)/;
 const BOLD_REGEX = /^\*\*([^*]* )\*\*/;
 const ITALICS_REGEX = /^__([^_]*)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
-const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s])/;
+const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s]|\[(.*?)\]\((.*?)\))/;
 
 const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX];
 let lastSrc = "";
@@ -169,6 +170,35 @@ const opts = {
         if (context.pagesToHrefs) {
           const text = hashMatch[1];
           const href = context.pagesToHrefs(text);
+          if (href) {
+            return {
+              type: "link",
+              raw,
+              href,
+              text,
+            };
+          } else {
+            return {
+              type: "text",
+              raw,
+              text,
+            };
+          }
+        } else {
+          return {
+            type: "text",
+            raw,
+            text: raw,
+          };
+        }
+      }
+
+      const aliasMatch = ALIAS_REGEX.exec(src);
+      if (aliasMatch) {
+        const raw = aliasMatch[0];
+        if (context.pagesToHrefs) {
+          const text = aliasMatch[1];
+          const href = context.pagesToHrefs(aliasMatch[2]);
           if (href) {
             return {
               type: "link",
