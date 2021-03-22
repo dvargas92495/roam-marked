@@ -14,7 +14,9 @@ const IFRAME_REGEX = new RegExp(
 );
 const BUTTON_REGEX = /^{{((?:\[\[)?(?:(?!}}[^}]).)*(?:\]\])?)}}/;
 const TAG_REGEX = /^#?\[\[(.*?)\]\]/;
-const ALIAS_REGEX = new RegExp(`^\\[(.*?)\\]\\(${TAG_REGEX.source.substring(1)}\\)`);
+const ALIAS_REGEX = new RegExp(
+  `^\\[(.*?)\\]\\(${TAG_REGEX.source.substring(1)}\\)`
+);
 const HASHTAG_REGEX = /^#([^\s]*)/;
 const BOLD_REGEX = /^\*\*([^*]* )\*\*/;
 const ITALICS_REGEX = /^__([^_]*)__/;
