@@ -64,6 +64,22 @@ test("Runs buttons", () => {
 `);
 });
 
+test("Custom components buttons", () => {
+  const md = `- {{component}}
+- {{no component}}`;
+
+  const context = {
+    components: (c: string) => c === 'component' && `<p>component</p>`,
+  }
+
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(run(md, context)).toBe(`<ul>
+<li><p>component</p></li>
+<li><button>no component</button></li>
+</ul>
+`);
+});
+
 test("Runs queries", () => {
   const md = `- {{[[query]]: {and:{or:[[TODO]] [[DONE]]} [[January 26th, 2021]]}}}`;
 

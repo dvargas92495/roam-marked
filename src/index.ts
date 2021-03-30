@@ -55,7 +55,6 @@ function indentCodeCompensation(raw: string, text: string) {
 }
 
 const opts = {
-  //marked.use({
   tokenizer: {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore should accept boolean return value
@@ -234,7 +233,7 @@ const opts = {
   renderer: {
     strong: (text: string) => `<span class="rm-bold">${text}</span>`,
     em: (text: string) => `<em class="rm-italics">${text}</em>`,
-    html: (text: string) => {
+    html(text: string) {
       if (TODO_REGEX.test(text)) {
         return RENDERED_TODO;
       } else if (DONE_REGEX.test(text)) {
@@ -246,12 +245,16 @@ const opts = {
         const match = HIGHLIGHT_REGEX.exec(text);
         return `<span class="rm-highlight">${match?.[1]}</span>`;
       } else if (BUTTON_REGEX.test(text)) {
-        const match = BUTTON_REGEX.exec(text);
-        return `<button>${match?.[1]}</button>`;
+        const match = BUTTON_REGEX.exec(text)?.[1] || "";
+        const context = this.context();
+        return context.components?.(match) || `<button>${match}</button>`;
       } else {
         return text;
       }
     },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore should acce
+    context: () => ({} as RoamContext),
   },
 };
 
@@ -261,12 +264,16 @@ marked.use(opts);
 
 type RoamContext = {
   pagesToHrefs?: (page: string) => string;
+  components?: (c: string) => string | false;
 };
 const contextualize = <T>(method: (text: string) => T) => (
   text: string,
   context?: RoamContext
 ): T => {
   opts.tokenizer.context = () => ({
+    ...context,
+  });
+  opts.renderer.context = () => ({
     ...context,
   });
   lastSrc = "";
