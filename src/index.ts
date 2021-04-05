@@ -18,8 +18,8 @@ const ALIAS_REGEX = new RegExp(
   `^\\[(.*?)\\]\\(${TAG_REGEX.source.substring(1)}\\)`
 );
 const HASHTAG_REGEX = /^#([^\s]*)/;
-const BOLD_REGEX = /^\*\*([^*]* )\*\*/;
-const ITALICS_REGEX = /^__([^_]*)__/;
+const BOLD_REGEX = /^\*\*(.*?)\*\*/;
+const ITALICS_REGEX = /^__(.*?)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
 const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s]|\[(.*?)\]\((.*?)\))/;
 

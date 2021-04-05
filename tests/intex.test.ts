@@ -7,6 +7,7 @@ test("Runs Default", () => {
 - A ^^highlighted^^ text
 - A ~~strikethrough~~ text
 - A **bolded ** text
+- A ** bolded** text
 - An __italicized __ text
 - __italicized __ text
 - A {{[[TODO]]}} This is a todo block
@@ -24,6 +25,7 @@ console.log("block");
 <li>A <span class="rm-highlight">highlighted</span> text</li>
 <li>A <del>strikethrough</del> text</li>
 <li>A <span class="rm-bold">bolded </span> text</li>
+<li>A <span class="rm-bold"> bolded</span> text</li>
 <li>An <em class="rm-italics">italicized </em> text</li>
 <li><em class="rm-italics">italicized </em> text</li>
 <li>A <span><label class="check-container"><input type="checkbox" disabled=""><span class="checkmark"></span></label></span> This is a todo block</li>
