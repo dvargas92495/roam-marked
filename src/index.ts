@@ -18,6 +18,7 @@ const ALIAS_REGEX = new RegExp(
   `^\\[(.*?)\\]\\(${TAG_REGEX.source.substring(1)}\\)`
 );
 const HASHTAG_REGEX = /^#([^\s]*)/;
+const ATTRIBUTE_REGEX = /^(.*?)::/;
 const BOLD_REGEX = /^\*\*(.*?)\*\*/;
 const ITALICS_REGEX = /^__(.*?)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
@@ -127,6 +128,48 @@ const opts = {
           raw: src.substring(0, match.index),
           text: src.substring(0, match.index),
         };
+      }
+      const attribute = ATTRIBUTE_REGEX.exec(src);
+      if (attribute) {
+        const raw = attribute[0];
+        const page = attribute[1];
+        const href = this.context().pagesToHrefs?.(page);
+        const text = `${page}:`;
+        if (href) {
+          return {
+            type: "strong",
+            raw,
+            text,
+            tokens: [
+              {
+                type: "link",
+                raw: text,
+                text,
+                href,
+                tokens: [
+                  {
+                    type: "text",
+                    raw: text,
+                    text,
+                  },
+                ],
+              },
+            ],
+          };
+        } else {
+          return {
+            type: "strong",
+            raw,
+            text,
+            tokens: [
+              {
+                type: "text",
+                raw: text,
+                text,
+              },
+            ],
+          };
+        }
       }
       return false;
     },

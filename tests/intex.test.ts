@@ -184,3 +184,18 @@ test("Renders page aliases", () => {
 </ul>
 `);
 });
+
+test("Renders Roam Attributes", () => {
+  const md = `- Known:: Attribute value
+- Unexpected:: just bold`;
+  const pages: {[t:string]:string} = {'Known': '/known'}
+  const context = {
+    pagesToHrefs: (t: string) => pages[t],
+  };
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
+  expect(run(md, context)).toBe(`<ul>
+<li><span class="rm-bold"><a href="/known">Known:</a></span> Attribute value</li>
+<li><span class="rm-bold">Unexpected:</span> just bold</li>
+</ul>
+`);
+});
