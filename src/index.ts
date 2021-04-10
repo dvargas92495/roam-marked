@@ -12,19 +12,31 @@ const DONE_REGEX = /^{{(?:\[\[)?DONE(?:\]\])?}}/;
 const IFRAME_REGEX = new RegExp(
   `^{{(?:\\[\\[)?iframe(?:\\]\\])?:(${URL_REGEX.source})}}`
 );
-const BUTTON_REGEX = /^{{((?:\[\[)?(?:(?!}}[^}]).)*(?:\]\])?)}}/;
+const BUTTON_REGEX = /^{{(?:\[\[)?((?:(?!}}[^}])[\w\s-])*)(?:\]\])?(?::(.*))?}}/;
 const TAG_REGEX = /^#?\[\[(.*?)\]\]/;
-const ALIAS_REGEX = new RegExp(
-  `^\\[(.*?)\\]\\(${TAG_REGEX.source.substring(1)}\\)`
-);
+const BLOCK_REF_REGEX = /^\(\((.*?)\)\)/;
+const toAlias = (r: RegExp) =>
+  new RegExp(`^\\[(.*?)\\]\\(${r.source.substring(1)}\\)`);
+const ALIAS_REGEX = toAlias(TAG_REGEX);
+const ALIAS_REF_REGEX = toAlias(BLOCK_REF_REGEX);
 const HASHTAG_REGEX = /^#([^\s]*)/;
 const ATTRIBUTE_REGEX = /^(.*?)::/;
 const BOLD_REGEX = /^\*\*(.*?)\*\*/;
 const ITALICS_REGEX = /^__(.*?)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
-const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s]|\[(.*?)\]\((.*?)\))/;
+const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s]|\(\(|\[(.*?)\]\((.*?)\))/;
+const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX, BLOCK_REF_REGEX];
 
-const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX];
+const defaultComponents = (component: string, afterColon?: string) => {
+  switch (component) {
+    case "youtube":
+    case "video":
+      return `<iframe src="${afterColon?.trim?.()}" class="rm-iframe rm-video-player"></iframe>`;
+    default:
+      return "";
+  }
+};
+
 let lastSrc = "";
 // https://github.com/markedjs/marked/blob/d2347e9b9ae517d02138fa6a9844bd8d586acfeb/src/Tokenizer.js#L33-L59
 function indentCodeCompensation(raw: string, text: string) {
@@ -265,6 +277,30 @@ const opts = {
           };
         }
       }
+
+      const aliasRefMatch = ALIAS_REF_REGEX.exec(src);
+      if (aliasRefMatch) {
+        const raw = aliasRefMatch[0];
+        const text = aliasRefMatch[1];
+        const ref = aliasRefMatch[2];
+        const href = context.pagesToHrefs?.(
+          context.blockReferences?.(ref)?.page || ""
+        );
+        if (href) {
+          return {
+            type: "link",
+            raw,
+            href: `${href}#${ref}`,
+            text,
+          };
+        } else {
+          return {
+            type: "text",
+            raw,
+            text,
+          };
+        }
+      }
       return false;
     },
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -289,8 +325,21 @@ const opts = {
         return `<span class="rm-highlight">${match?.[1]}</span>`;
       } else if (BUTTON_REGEX.test(text)) {
         const match = BUTTON_REGEX.exec(text)?.[1] || "";
+        const afterColon = BUTTON_REGEX.exec(text)?.[2];
         const context = this.context();
-        return context.components?.(match) || `<button>${match}</button>`;
+        return (
+          context.components?.(match) ||
+          defaultComponents(match, afterColon) ||
+          `<button>${match}</button>`
+        );
+      } else if (BLOCK_REF_REGEX.test(text)) {
+        const match = BLOCK_REF_REGEX.exec(text)?.[1] || "";
+        const context = this.context();
+        const blockRefInfo = context.blockReferences?.(match);
+        if (!blockRefInfo) {
+          return text;
+        }
+        return `<span class="rm-block-ref">${blockRefInfo.text}</span>`;
       } else {
         return text;
       }
@@ -308,6 +357,7 @@ marked.use(opts);
 type RoamContext = {
   pagesToHrefs?: (page: string) => string;
   components?: (c: string) => string | false;
+  blockReferences?: (ref: string) => { text: string; page: string };
 };
 const contextualize = <T>(method: (text: string) => T) => (
   text: string,

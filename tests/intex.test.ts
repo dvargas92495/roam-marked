@@ -71,8 +71,8 @@ test("Custom components buttons", () => {
 - {{no component}}`;
 
   const context = {
-    components: (c: string) => c === 'component' && `<p>component</p>`,
-  }
+    components: (c: string) => c === "component" && `<p>component</p>`,
+  };
 
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(run(md, context)).toBe(`<ul>
@@ -87,7 +87,7 @@ test("Runs queries", () => {
 
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(run(md)).toBe(`<ul>
-<li><button>[[query]]: {and:{or:[[TODO]] [[DONE]]} [[January 26th, 2021]]}</button></li>
+<li><button>query</button></li>
 </ul>
 `);
 });
@@ -188,7 +188,7 @@ test("Renders page aliases", () => {
 test("Renders Roam Attributes", () => {
   const md = `- Known:: Attribute value
 - Unexpected:: just bold`;
-  const pages: {[t:string]:string} = {'Known': '/known'}
+  const pages: { [t: string]: string } = { Known: "/known" };
   const context = {
     pagesToHrefs: (t: string) => pages[t],
   };
@@ -199,3 +199,44 @@ test("Renders Roam Attributes", () => {
 </ul>
 `);
 });
+
+test("Render block references", () => {
+  const md = `- A known reference ((123456789))
+- An unknown reference ((abcdefghi))
+- A known alias reference [number alias](((123456789)))
+- An unknown alias reference [letter alias](((abcdefghi)))`;
+  const pages: { [t: string]: string } = { Number: "/number" };
+  const blockReferences: { [t: string]: { text: string; page: string } } = {
+    "123456789": {
+      text: "A number block",
+      page: "Number",
+    },
+  };
+  const context = {
+    pagesToHrefs: (t: string) => pages[t],
+    blockReferences: (t: string) => blockReferences[t],
+  };
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
+  expect(run(md, context)).toBe(`<ul>
+<li>A known reference <span class="rm-block-ref">A number block</span></li>
+<li>An unknown reference ((abcdefghi))</li>
+<li>A known alias reference <a href="/number#123456789">number alias</a></li>
+<li>An unknown alias reference letter alias</li>
+</ul>
+`);
+});
+
+test("Render videos", () => {
+  const md = `- {{[[youtube]]: https://www.youtube.com/embed/cQ25hHAPZk0}}
+- {{video: https://www.youtube.com/embed/cQ25hHAPZk0}}`;
+  const pages: { [t: string]: string } = { Known: "/known" };
+  const context = {
+    pagesToHrefs: (t: string) => pages[t],
+  };
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
+  expect(run(md, context)).toBe(`<ul>
+<li><iframe src="https://www.youtube.com/embed/cQ25hHAPZk0" class="rm-iframe rm-video-player"></iframe></li>
+<li><iframe src="https://www.youtube.com/embed/cQ25hHAPZk0" class="rm-iframe rm-video-player"></iframe></li>
+</ul>
+`);
+})
