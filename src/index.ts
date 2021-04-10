@@ -28,10 +28,14 @@ const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s]|\(\(|\[(.*?)\]\((.*?)\
 const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX, BLOCK_REF_REGEX];
 
 const defaultComponents = (component: string, afterColon?: string) => {
+  const opts = afterColon?.trim?.() || "";
   switch (component) {
     case "youtube":
     case "video":
-      return `<iframe src="${afterColon?.trim?.()}" class="rm-iframe rm-video-player"></iframe>`;
+      return `<iframe src="${opts.replace(
+        "watch?v=",
+        "embed/"
+      )}" class="rm-iframe rm-video-player"></iframe>`;
     default:
       return "";
   }
@@ -354,7 +358,7 @@ const opts = {
 // @ts-ignore should accept boolean return value
 marked.use(opts);
 
-type RoamContext = {
+export type RoamContext = {
   pagesToHrefs?: (page: string) => string;
   components?: (c: string) => string | false;
   blockReferences?: (ref: string) => { text: string; page: string };
