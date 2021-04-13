@@ -25,7 +25,8 @@ const BOLD_REGEX = /^\*\*(.*?)\*\*/;
 const ITALICS_REGEX = /^__(.*?)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
 const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s]|\(\(|\[(.*?)\]\((.*?)\))/;
-const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX, BLOCK_REF_REGEX];
+const HR_REGEX = /^---$/;
+const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX, BLOCK_REF_REGEX, HR_REGEX];
 
 const defaultComponents = (component: string, afterColon?: string) => {
   const opts = afterColon?.trim?.() || "";
@@ -321,6 +322,8 @@ const opts = {
         return RENDERED_TODO;
       } else if (DONE_REGEX.test(text)) {
         return RENDERED_DONE;
+      } else if (HR_REGEX.test(text)) {
+        return '<hr>';
       } else if (IFRAME_REGEX.test(text)) {
         const match = IFRAME_REGEX.exec(text);
         return `<iframe src="${match?.[1]}" frameborder="0" height="100%" width="100%"></iframe>`;
@@ -332,7 +335,7 @@ const opts = {
         const afterColon = BUTTON_REGEX.exec(text)?.[2];
         const context = this.context();
         return (
-          context.components?.(match) ||
+          context.components?.(match, afterColon) ||
           defaultComponents(match, afterColon) ||
           `<button>${match}</button>`
         );
@@ -360,7 +363,7 @@ marked.use(opts);
 
 export type RoamContext = {
   pagesToHrefs?: (page: string) => string;
-  components?: (c: string) => string | false;
+  components?: (c: string, ac?: string) => string | false;
   blockReferences?: (ref: string) => { text: string; page: string };
 };
 const contextualize = <T>(method: (text: string) => T) => (

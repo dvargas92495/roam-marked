@@ -1,4 +1,4 @@
-import run, { lexer } from "../src";
+import run, { lexer, parseInline } from "../src";
 import fs from "fs";
 
 test("Runs Default", () => {
@@ -239,4 +239,10 @@ test("Render videos", () => {
 <li><iframe src="https://www.youtube.com/embed/cQ25hHAPZk0" class="rm-iframe rm-video-player"></iframe></li>
 </ul>
 `);
+})
+
+test("Render hrs", () => {
+  const md = `---`;
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(parseInline(md)).toBe(`<hr>`);
 })
