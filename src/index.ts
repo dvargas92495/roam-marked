@@ -323,7 +323,7 @@ const opts = {
       } else if (DONE_REGEX.test(text)) {
         return RENDERED_DONE;
       } else if (HR_REGEX.test(text)) {
-        return '<hr>';
+        return "<hr>";
       } else if (IFRAME_REGEX.test(text)) {
         const match = IFRAME_REGEX.exec(text);
         return `<iframe src="${match?.[1]}" frameborder="0" height="100%" width="100%"></iframe>`;
