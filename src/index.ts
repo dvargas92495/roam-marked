@@ -289,13 +289,14 @@ const opts = {
         const text = aliasRefMatch[1];
         const ref = aliasRefMatch[2];
         const href = context.pagesToHrefs?.(
-          context.blockReferences?.(ref)?.page || ""
+          context.blockReferences?.(ref)?.page || "",
+          ref
         );
         if (href) {
           return {
             type: "link",
             raw,
-            href: `${href}#${ref}`,
+            href,
             text,
           };
         } else {
@@ -362,7 +363,7 @@ const opts = {
 marked.use(opts);
 
 export type RoamContext = {
-  pagesToHrefs?: (page: string) => string;
+  pagesToHrefs?: (page: string, uid?: string) => string;
   components?: (c: string, ac?: string) => string | false;
   blockReferences?: (ref: string) => { text: string; page: string };
 };

@@ -213,7 +213,8 @@ test("Render block references", () => {
     },
   };
   const context = {
-    pagesToHrefs: (t: string) => pages[t],
+    pagesToHrefs: (t: string, r?: string) =>
+      pages[t] ? (r ? `${pages[t]}#${r}` : pages[t]) : "",
     blockReferences: (t: string) => blockReferences[t],
   };
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
@@ -239,10 +240,10 @@ test("Render videos", () => {
 <li><iframe src="https://www.youtube.com/embed/cQ25hHAPZk0" class="rm-iframe rm-video-player"></iframe></li>
 </ul>
 `);
-})
+});
 
 test("Render hrs", () => {
   const md = `---`;
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(parseInline(md)).toBe(`<hr>`);
-})
+});
