@@ -337,7 +337,7 @@ const opts = {
         return (
           context.components?.(match, afterColon) ||
           defaultComponents(match, afterColon) ||
-          `<button>${match}</button>`
+          `<button class="bp3-button">${match}</button>`
         );
       } else if (BLOCK_REF_REGEX.test(text)) {
         const match = BLOCK_REF_REGEX.exec(text)?.[1] || "";

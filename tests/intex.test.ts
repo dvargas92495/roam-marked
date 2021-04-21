@@ -61,7 +61,7 @@ test("Runs buttons", () => {
 
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(run(md)).toBe(`<ul>
-<li><button>pull references</button></li>
+<li><button class="bp3-button">pull references</button></li>
 </ul>
 `);
 });
@@ -77,7 +77,7 @@ test("Custom components buttons", () => {
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(run(md, context)).toBe(`<ul>
 <li><p>component</p></li>
-<li><button>no component</button></li>
+<li><button class="bp3-button">no component</button></li>
 </ul>
 `);
 });
@@ -87,7 +87,7 @@ test("Runs queries", () => {
 
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(run(md)).toBe(`<ul>
-<li><button>query</button></li>
+<li><button class="bp3-button">query</button></li>
 </ul>
 `);
 });
