@@ -247,3 +247,12 @@ test("Render hrs", () => {
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(parseInline(md)).toBe(`<hr>`);
 });
+
+test("Incomplete Tag", () => {
+  const md = `- [[Incomplete]`;
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(run(md)).toBe(`<ul>
+<li>[[Incomplete]</li>
+</ul>
+`);
+});

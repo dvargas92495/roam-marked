@@ -24,7 +24,7 @@ const ATTRIBUTE_REGEX = /^(.*?)::/;
 const BOLD_REGEX = /^\*\*(.*?)\*\*/;
 const ITALICS_REGEX = /^__(.*?)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
-const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[|#[^\s]|\(\(|\[(.*?)\]\((.*?)\))/;
+const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[(.*?)\]\]|#[^\s]|\(\(|\[(.*?)\]\((.*?)\))/;
 const HR_REGEX = /^---$/;
 const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX, BLOCK_REF_REGEX, HR_REGEX];
 
