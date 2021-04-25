@@ -266,6 +266,7 @@ const opts = {
               raw,
               href,
               text,
+              title: 'alias'
             };
           } else {
             return {
@@ -298,6 +299,7 @@ const opts = {
             raw,
             href,
             text,
+            title: 'alias'
           };
         } else {
           return {
@@ -316,6 +318,15 @@ const opts = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore should be optional
   renderer: {
+    link(href: string, title?: string, text?: string): string | false {
+      if (title === "alias") {
+        const html = this.link(href, undefined, text);
+        if (html) {
+          return html.replace("href=", 'class="rm-alias" href=');
+        }
+      }
+      return false;
+    },
     strong: (text: string) => `<span class="rm-bold">${text}</span>`,
     em: (text: string) => `<em class="rm-italics">${text}</em>`,
     html(text: string) {

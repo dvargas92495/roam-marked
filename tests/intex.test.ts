@@ -179,7 +179,7 @@ test("Renders page aliases", () => {
   };
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
   expect(run(md, context)).toBe(`<ul>
-<li>Resolve an alias <a href="/hello-world">Page</a></li>
+<li>Resolve an alias <a class="rm-alias" href="/hello-world">Page</a></li>
 <li>An invalid <a href="wat">alias</a></li>
 </ul>
 `);
@@ -221,7 +221,7 @@ test("Render block references", () => {
   expect(run(md, context)).toBe(`<ul>
 <li>A known reference <span class="rm-block-ref">A number block</span></li>
 <li>An unknown reference ((abcdefghi))</li>
-<li>A known alias reference <a href="/number#123456789">number alias</a></li>
+<li>A known alias reference <a class="rm-alias" href="/number#123456789">number alias</a></li>
 <li>An unknown alias reference letter alias</li>
 </ul>
 `);
