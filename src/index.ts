@@ -266,7 +266,7 @@ const opts = {
               raw,
               href,
               text,
-              title: 'alias'
+              title: "alias",
             };
           } else {
             return {
@@ -299,7 +299,7 @@ const opts = {
             raw,
             href,
             text,
-            title: 'alias'
+            title: "alias",
           };
         } else {
           return {
