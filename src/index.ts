@@ -12,7 +12,7 @@ const DONE_REGEX = /^{{(?:\[\[)?DONE(?:\]\])?}}/;
 const IFRAME_REGEX = new RegExp(
   `^{{(?:\\[\\[)?iframe(?:\\]\\])?:(${URL_REGEX.source})}}`
 );
-const BUTTON_REGEX = /^{{(?:\[\[)?((?:(?!}}[^}])[\w\s-])*)(?:\]\])?(?::(.*))?}}/;
+const BUTTON_REGEX = /^{{(?:\[\[)?((?:(?!}}[^}])[\w\s-/])*)(?:\]\])?(?::(.*))?}}/;
 const TAG_REGEX = /^#?\[\[(.*?)\]\]/;
 const BLOCK_REF_REGEX = /^\(\((.*?)\)\)/;
 const toAlias = (r: RegExp) =>

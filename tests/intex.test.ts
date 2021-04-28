@@ -256,3 +256,9 @@ test("Incomplete Tag", () => {
 </ul>
 `);
 });
+
+test("Roam Render", () => {
+  const md = `{{roam/render: ((sketching))}}`;
+  fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
+  expect(parseInline(md)).toBe(`<button class="bp3-button">roam/render</button>`);
+})
