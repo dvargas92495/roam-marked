@@ -26,6 +26,7 @@ const ITALICS_REGEX = /^__(.*?)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
 const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[(.*?)\]\]|#[^\s]|\(\(|\[(.*?)\]\((.*?)\))/;
 const HR_REGEX = /^---$/;
+const TWEET_STATUS_REGEX = /\/status\/(.*?)(?:\?s=\d*)?$/;
 const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX, BLOCK_REF_REGEX, HR_REGEX];
 
 const defaultComponents = (component: string, afterColon?: string) => {
@@ -324,6 +325,10 @@ const opts = {
         if (html) {
           return html.replace("href=", 'class="rm-alias" href=');
         }
+      }
+      if (href.startsWith('https://twitter.com')) {
+        const tweetId = TWEET_STATUS_REGEX.exec(href)?.[1];
+        return `<iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: 550px; height: 223px; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?dnt=false&amp;frame=false&amp;hideCard=false&amp;hideThread=true&amp;id=${tweetId}&amp;lang=en&amp;theme=light&amp;width=550px" data-tweet-id="${tweetId}"></iframe>`;
       }
       return false;
     },
