@@ -1,4 +1,4 @@
-import run, { lexer, parseInline } from "../src";
+import run, { inlineLexer, lexer, parseInline } from "../src";
 import fs from "fs";
 
 test("Runs Default", () => {
@@ -260,5 +260,20 @@ test("Incomplete Tag", () => {
 test("Roam Render", () => {
   const md = `{{roam/render: ((sketching))}}`;
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
-  expect(parseInline(md)).toBe(`<button class="bp3-button">roam/render</button>`);
-})
+  expect(parseInline(md)).toBe(
+    `<button class="bp3-button">roam/render</button>`
+  );
+});
+
+test("Inline Code Blocks", () => {
+  const md = `\`\`\`css
+body {
+  background-color: red;
+}\`\`\``;
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
+  expect(parseInline(md)).toBe(
+    `<pre><code><span class="token selector">body</span> <span class="token punctuation">{</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> <span class="token color">red</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>`
+  );
+});

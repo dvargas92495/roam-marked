@@ -1,5 +1,7 @@
-import marked from "marked";
+import marked, { Lexer } from "marked";
 import XRegExp from "xregexp";
+import refractor from "refractor";
+import toHtml from "hast-util-to-html";
 
 const RENDERED_TODO =
   '<span><label class="check-container"><input type="checkbox" disabled=""><span class="checkmark"></span></label></span>';
@@ -28,6 +30,7 @@ const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[(.*?)\]\]|#[^\s]|\(\(|\[(.*?)\
 const HR_REGEX = /^---$/;
 const TWEET_STATUS_REGEX = /\/status\/(.*?)(?:\?s=\d*)?$/;
 const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX, BLOCK_REF_REGEX, HR_REGEX];
+const CODESPAN_REGEX = new RegExp("^```([\\w]*)\n(.*)```$", "s");
 
 const defaultComponents = (component: string, afterColon?: string) => {
   const opts = afterColon?.trim?.() || "";
@@ -193,6 +196,21 @@ const opts = {
     },
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore should accept boolean return value
+    codespan(src) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore should accept boolean return value
+      const cap = this.rules.inline.code.exec(src);
+      if (cap) {
+        return {
+          type: "codespan",
+          raw: cap[0],
+          text: cap[0],
+        };
+      }
+      return false;
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore should accept boolean return value
     link(src) {
       const context = this.context();
       if (TAG_REGEX.test(src)) {
@@ -332,6 +350,16 @@ const opts = {
       }
       return false;
     },
+    codespan(code: string) {
+      const match = CODESPAN_REGEX.exec(code);
+      if (match) {
+        const nodes = refractor.highlight(match[2], match[1]);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        return `<pre><code>${toHtml(nodes)}</code></pre>`;
+      }
+      return false;
+    },
     strong: (text: string) => `<span class="rm-bold">${text}</span>`,
     em: (text: string) => `<em class="rm-italics">${text}</em>`,
     html(text: string) {
@@ -397,6 +425,11 @@ const contextualize = <T>(method: (text: string) => T) => (
   return method(text);
 };
 
+export const inlineLexer = contextualize((s) =>
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore types are out of date
+  Lexer.lexInline(s)
+);
 export const lexer = contextualize(marked.lexer);
 export const parseInline = contextualize(marked.parseInline);
 export default contextualize<string>(marked);
