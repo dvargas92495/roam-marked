@@ -346,7 +346,7 @@ const opts = {
       }
       if (href.startsWith("https://twitter.com")) {
         const tweetId = TWEET_STATUS_REGEX.exec(href)?.[1];
-        return `<iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: 550px; height: 223px; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?dnt=false&amp;frame=false&amp;hideCard=false&amp;hideThread=true&amp;id=${tweetId}&amp;lang=en&amp;theme=light&amp;width=550px" data-tweet-id="${tweetId}"></iframe>`;
+        return `<iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: 550px; height: 550px; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?dnt=false&amp;frame=false&amp;hideCard=false&amp;hideThread=true&amp;id=${tweetId}&amp;lang=en&amp;theme=light&amp;width=550px" data-tweet-id="${tweetId}"></iframe>`;
       }
       return false;
     },
