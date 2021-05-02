@@ -201,11 +201,13 @@ const opts = {
       // @ts-ignore should accept boolean return value
       const cap = this.rules.inline.code.exec(src);
       if (cap) {
-        return {
-          type: "codespan",
-          raw: cap[0],
-          text: cap[0],
-        };
+        if (cap[0].startsWith("```")) {
+          return {
+            type: "codespan",
+            raw: cap[0],
+            text: cap[0],
+          };
+        }
       }
       return false;
     },
@@ -354,9 +356,11 @@ const opts = {
       const match = CODESPAN_REGEX.exec(code);
       if (match) {
         const nodes = refractor.highlight(match[2], match[1]);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        return `<pre><code>${toHtml(nodes)}</code></pre>`;
+        return `<pre><code class="language-${match[1]}">${toHtml(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          nodes
+        )}</code></pre>`;
       }
       return false;
     },

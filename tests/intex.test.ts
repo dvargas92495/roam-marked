@@ -272,8 +272,16 @@ body {
 }\`\`\``;
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
   expect(parseInline(md)).toBe(
-    `<pre><code><span class="token selector">body</span> <span class="token punctuation">{</span>
+    `<pre><code class="language-css"><span class="token selector">body</span> <span class="token punctuation">{</span>
   <span class="token property">background-color</span><span class="token punctuation">:</span> <span class="token color">red</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>`
+  );
+});
+
+test("Inline Code Spans", () => {
+  const md = `Here is \`a code\` span`;
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
+  expect(parseInline(md)).toBe(
+    `Here is <code>a code</code> span`
   );
 });
