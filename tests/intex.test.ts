@@ -106,8 +106,8 @@ test("Runs tags as links", () => {
   };
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
   expect(run(md, context)).toBe(`<ul>
-<li>Started with <a href="/hello-world">Hello World</a></li>
-<li>Then <a href="/asdfasdf">Vargas</a> is my last name</li>
+<li>Started with <a class="rm-page-ref" data-tag="Hello World" href="/hello-world">Hello World</a></li>
+<li>Then <a class="rm-page-ref" data-tag="Vargas" href="/asdfasdf">Vargas</a> is my last name</li>
 <li>This Page has no href</li>
 </ul>
 `);
@@ -134,7 +134,7 @@ test("Double tag on context", () => {
   };
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
   expect(run(md, context)).toBe(`<ul>
-<li>Started with <a href="/hello-world">Hello World</a> <a href="/page">Page</a></li>
+<li>Started with <a class="rm-page-ref" data-tag="Hello World" href="/hello-world">Hello World</a> <a class="rm-page-ref" data-tag="Page" href="/page">Page</a></li>
 </ul>
 `);
 });
@@ -155,9 +155,9 @@ test("Nested Links", () => {
 
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
   expect(run(md, context)).toBe(`<ul>
-<li>One type of <a href="/start"><a href="/nested">Nested</a> Links</a></li>
-<li>And another <a href="/middle">Example <a href="/nested">Nested</a> Link</a></li>
-<li>A Final <a href="/end">Link <a href="/nested">Nested</a></a></li>
+<li>One type of <a class="rm-page-ref" data-tag="[[Nested]] Links" href="/start"><a class="rm-page-ref" data-tag="Nested" href="/nested">Nested</a> Links</a></li>
+<li>And another <a class="rm-page-ref" data-tag="Example [[Nested]] Link" href="/middle">Example <a class="rm-page-ref" data-tag="Nested" href="/nested">Nested</a> Link</a></li>
+<li>A Final <a class="rm-page-ref" data-tag="Link [[Nested]]" href="/end">Link <a class="rm-page-ref" data-tag="Nested" href="/nested">Nested</a></a></li>
 </ul>
 `);
 });
