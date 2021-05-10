@@ -12,7 +12,7 @@ const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()
 const TODO_REGEX = /^{{(?:\[\[)?TODO(?:\]\])?}}/;
 const DONE_REGEX = /^{{(?:\[\[)?DONE(?:\]\])?}}/;
 const IFRAME_REGEX = new RegExp(
-  `^{{(?:\\[\\[)?iframe(?:\\]\\])?:(${URL_REGEX.source})}}`
+  `^{{(?:\\[\\[)?iframe(?:\\]\\])?:\\s*(${URL_REGEX.source})}}`
 );
 const BUTTON_REGEX = /^{{(?:\[\[)?((?:(?!}}[^}])[\w\s-/])*)(?:\]\])?(?::(.*))?}}/;
 const TAG_REGEX = /^#?\[\[(.*?)\]\]/;
