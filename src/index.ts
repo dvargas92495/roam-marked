@@ -229,6 +229,7 @@ const opts = {
               raw,
               href,
               text,
+              title: `tag:${text}`,
             };
           } else {
             return {
@@ -258,6 +259,7 @@ const opts = {
               raw,
               href,
               text,
+              title: `tag:${text}`,
             };
           } else {
             return {
@@ -344,6 +346,15 @@ const opts = {
         const html = this.link(href, undefined, text);
         if (html) {
           return html.replace("href=", 'class="rm-alias" href=');
+        }
+      }
+      if (title?.startsWith("tag:")) {
+        const html = this.link(href, undefined, text);
+        if (html) {
+          return html.replace(
+            "href=",
+            `class="rm-page-ref" data-tag="${title.substring(4)}" href=`
+          );
         }
       }
       if (href.startsWith("https://twitter.com")) {
