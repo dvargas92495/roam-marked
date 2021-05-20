@@ -28,8 +28,13 @@ const ITALICS_REGEX = /^__(.*?)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
 const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[(.*?)\]\]|#[^\s]|\(\(|\[(.*?)\]\((.*?)\))/;
 const HR_REGEX = /^---$/;
+const BQ_REGEX = /^> (.*)$/;
 const TWEET_STATUS_REGEX = /\/status\/(.*?)(?:\?s=\d*)?$/;
-const HTML_REGEXES = [HIGHLIGHT_REGEX, BUTTON_REGEX, BLOCK_REF_REGEX, HR_REGEX];
+const HTML_REGEXES = [BUTTON_REGEX, BLOCK_REF_REGEX, HR_REGEX];
+const HTML_WITH_CHILD_REGEXES = [
+  { rgx: BQ_REGEX, title: "blockquote" },
+  { rgx: HIGHLIGHT_REGEX, title: "highlight" },
+];
 const CODESPAN_REGEX = new RegExp("^```([\\w]*)\n(.*)```$", "s");
 
 const defaultComponents = (component: string, afterColon?: string) => {
@@ -332,6 +337,19 @@ const opts = {
           };
         }
       }
+
+      // hijacking link for html elements with tokens
+      for (const { rgx, title } of HTML_WITH_CHILD_REGEXES) {
+        const match = rgx.exec(src);
+        if (match) {
+          return {
+            type: "link",
+            raw: match[0],
+            text: match[1],
+            title,
+          };
+        }
+      }
       return false;
     },
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -347,8 +365,7 @@ const opts = {
         if (html) {
           return html.replace("href=", 'class="rm-alias" href=');
         }
-      }
-      if (title?.startsWith("tag:")) {
+      } else if (title?.startsWith("tag:")) {
         const html = this.link(href, undefined, text);
         if (html) {
           return html.replace(
@@ -356,8 +373,11 @@ const opts = {
             `class="rm-page-ref" data-tag="${title.substring(4)}" href=`
           );
         }
-      }
-      if (href.startsWith("https://twitter.com")) {
+      } else if (title === "highlight") {
+        return `<span class="rm-highlight">${text}</span>`;
+      } else if (title === "blockquote") {
+        return `<blockquote class="rm-bq">${text}</blockquote>`;
+      } else if (href.startsWith("https://twitter.com")) {
         const tweetId = TWEET_STATUS_REGEX.exec(href)?.[1];
         return `<iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: 550px; height: 550px; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?dnt=false&amp;frame=false&amp;hideCard=false&amp;hideThread=true&amp;id=${tweetId}&amp;lang=en&amp;theme=light&amp;width=550px" data-tweet-id="${tweetId}"></iframe>`;
       }
@@ -407,6 +427,9 @@ const opts = {
           return text;
         }
         return `<span class="rm-block-ref">${blockRefInfo.text}</span>`;
+      } else if (BQ_REGEX.test(text)) {
+        const match = BQ_REGEX.exec(text);
+        return `<blockquote class="rm-bq">${match?.[1]}</blockquote>`;
       } else {
         return text;
       }

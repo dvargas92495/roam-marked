@@ -285,3 +285,11 @@ test("Inline Code Spans", () => {
     `Here is <code>a code</code> span`
   );
 });
+
+test('Blockquote', () => {
+  const md = '> an **important** aside';
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
+  expect(parseInline(md)).toBe(
+    `<blockquote class="rm-bq">an <span class="rm-bold">important</span> aside</blockquote>`
+  );
+});
