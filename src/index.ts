@@ -26,7 +26,7 @@ const ATTRIBUTE_REGEX = /^(.*?)::/;
 const BOLD_REGEX = /^\*\*(.*?)\*\*/;
 const ITALICS_REGEX = /^__(.*?)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
-const INLINE_STOP_REGEX = /({{|\*\*|__|\^\^|#?\[\[(.*?)\]\]|#[^\s]|\(\(|\[(.*?)\]\((.*?)\))/;
+const INLINE_STOP_REGEX = /({{|\*\*([^*]+?)\*\*|__([^_]+?)__|\^\^([^^]+?)\^\^|#?\[\[(.*?)\]\]|#[^\s]|\(\(|\[(.*?)\]\((.*?)\))/;
 const HR_REGEX = /^---$/;
 const BQ_REGEX = /^> (.*)$/;
 const TWEET_STATUS_REGEX = /\/status\/(.*?)(?:\?s=\d*)?$/;
@@ -100,7 +100,7 @@ const opts = {
     },
     emStrong(src: string) {
       const match = BOLD_REGEX.exec(src);
-      if (match) {
+      if (match && match[1]?.length) {
         return {
           type: "strong",
           raw: match[0],
@@ -108,7 +108,7 @@ const opts = {
         };
       }
       const emMatch = ITALICS_REGEX.exec(src);
-      if (emMatch) {
+      if (emMatch && emMatch[1]?.length) {
         return {
           type: "em",
           raw: emMatch[0],

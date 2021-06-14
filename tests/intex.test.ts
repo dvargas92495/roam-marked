@@ -293,3 +293,15 @@ test('Blockquote', () => {
     `<blockquote class="rm-bq">an <span class="rm-bold">important</span> aside</blockquote>`
   );
 });
+
+test('Long underscore', () => {
+  const md = '[[__________ wat]]';
+  const pages: { [t: string]: string } = { '__________ wat': "/___________wat" };
+  const context = {
+    pagesToHrefs: (t: string) => pages[t],
+  };
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md, context), null, 4));
+  expect(parseInline(md, context)).toBe(
+    `<a class="rm-page-ref" data-tag="__________ wat" href="/___________wat">__________ wat</a>`
+  );
+});
