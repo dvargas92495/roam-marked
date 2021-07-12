@@ -42,10 +42,12 @@ const defaultComponents = (component: string, afterColon?: string) => {
   switch (component) {
     case "youtube":
     case "video":
-      return `<iframe src="${opts.replace(
-        "watch?v=",
-        "embed/"
-      )}" class="rm-iframe rm-video-player"></iframe>`;
+      return `<iframe src="${opts
+        .replace("watch?v=", "embed/")
+        .replace(
+          "vimeo.com",
+          "player.vimeo.com/video"
+        )}" class="rm-iframe rm-video-player"></iframe>`;
     default:
       return "";
   }
