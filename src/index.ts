@@ -26,7 +26,7 @@ const ATTRIBUTE_REGEX = /^(.*?)::/;
 const BOLD_REGEX = /^\*\*(.*?)\*\*/;
 const ITALICS_REGEX = /^__(.*?)__/;
 const HIGHLIGHT_REGEX = /^\^\^([^^]*)\^\^/;
-const INLINE_STOP_REGEX = /({{|\*\*([^*]+?)\*\*|__([^_]+?)__|\^\^([^^]+?)\^\^|#?\[\[(.*?)\]\]|#[^\s]|\(\(|\[(.*?)\]\((.*?)\))/;
+const INLINE_STOP_REGEX = /({{|\*\*([^*]+?)\*\*|__([^_]+?)__|\^\^([^^]+?)\^\^|#?\[\[(.*?)\]\]|#[^\s]|\(\(.*?\)\)|\[(.*?)\]\((.*?)\))/;
 const HR_REGEX = /^---$/;
 const BQ_REGEX = /^> (.*)$/;
 const TWEET_STATUS_REGEX = /\/status\/(.*?)(?:\?s=\d*)?$/;

@@ -281,27 +281,38 @@ body {
 test("Inline Code Spans", () => {
   const md = `Here is \`a code\` span`;
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
-  expect(parseInline(md)).toBe(
-    `Here is <code>a code</code> span`
-  );
+  expect(parseInline(md)).toBe(`Here is <code>a code</code> span`);
 });
 
-test('Blockquote', () => {
-  const md = '> an **important** aside';
+test("Blockquote", () => {
+  const md = "> an **important** aside";
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
   expect(parseInline(md)).toBe(
     `<blockquote class="rm-bq">an <span class="rm-bold">important</span> aside</blockquote>`
   );
 });
 
-test('Long underscore', () => {
-  const md = '[[__________ wat]]';
-  const pages: { [t: string]: string } = { '__________ wat': "/___________wat" };
+test("Long underscore", () => {
+  const md = "[[__________ wat]]";
+  const pages: { [t: string]: string } = {
+    "__________ wat": "/___________wat",
+  };
   const context = {
     pagesToHrefs: (t: string) => pages[t],
   };
-  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md, context), null, 4));
+  fs.writeFileSync(
+    "debug.json",
+    JSON.stringify(inlineLexer(md, context), null, 4)
+  );
   expect(parseInline(md, context)).toBe(
     `<a class="rm-page-ref" data-tag="__________ wat" href="/___________wat">__________ wat</a>`
+  );
+});
+
+test("Double left paren", () => {
+  const md = "This block has two left parens ((but should still parse)";
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
+  expect(parseInline(md)).toBe(
+    `This block has two left parens ((but should still parse)`
   );
 });
