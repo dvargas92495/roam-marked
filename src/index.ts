@@ -107,8 +107,8 @@ const opts = {
       if (match) {
         return {
           type: "text",
-          raw: '~',
-          text: '~',
+          raw: "~",
+          text: "~",
         };
       }
       return false;
