@@ -100,6 +100,19 @@ const opts = {
       }
       return false;
     },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore should accept boolean return value
+    del(src: string) {
+      const match = /^~[^~]/.exec(src);
+      if (match) {
+        return {
+          type: "text",
+          raw: '~',
+          text: '~',
+        };
+      }
+      return false;
+    },
     emStrong(src: string) {
       const match = BOLD_REGEX.exec(src);
       if (match && match[1]?.length) {

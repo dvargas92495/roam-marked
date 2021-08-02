@@ -316,3 +316,19 @@ test("Double left paren", () => {
     `This block has two left parens ((but should still parse)`
   );
 });
+
+test("Single tilde", () => {
+  const md = "This ~~has strikethrough~~ but ~this does~ not.";
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
+  expect(parseInline(md)).toBe(
+    `This <del>has strikethrough</del> but ~this does~ not.`
+  );
+});
+
+test("Special chars", () => {
+  const md = "« So much happening! »";
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
+  expect(parseInline(md)).toBe(
+    `« So much happening! »`
+  );
+});
