@@ -43,11 +43,14 @@ const defaultComponents = (component: string, afterColon?: string) => {
     case "youtube":
     case "video":
       return `<iframe src="${opts
+        .replace("youtu.be", "www.youtube.com/embed")
         .replace("watch?v=", "embed/")
         .replace(
           "vimeo.com",
           "player.vimeo.com/video"
         )}" class="rm-iframe rm-video-player"></iframe>`;
+    case "pdf":
+      return `<iframe src="${opts}"></iframe>`;
     default:
       return "";
   }
