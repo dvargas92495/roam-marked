@@ -166,7 +166,7 @@ test("Renders iframe", () => {
   const md = `- {{iframe:https://givebutter.com/roamjs}}`;
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md), null, 4));
   expect(run(md)).toBe(`<ul>
-<li><iframe src="https://givebutter.com/roamjs" frameborder="0" height="100%" width="100%"></iframe></li>
+<li><div class="rm-iframe-container"><iframe src="https://givebutter.com/roamjs" frameborder="0" class="rm-iframe"></iframe></div></li>
 </ul>
 `);
 });
@@ -236,8 +236,8 @@ test("Render videos", () => {
   };
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
   expect(run(md, context)).toBe(`<ul>
-<li><iframe src="https://www.youtube.com/embed/cQ25hHAPZk0" class="rm-iframe rm-video-player"></iframe></li>
-<li><iframe src="https://www.youtube.com/embed/cQ25hHAPZk0" class="rm-iframe rm-video-player"></iframe></li>
+<li><div class="rm-iframe-container"><iframe src="https://www.youtube.com/embed/cQ25hHAPZk0" class="rm-iframe rm-video-player"></iframe></div></li>
+<li><div class="rm-iframe-container"><iframe src="https://www.youtube.com/embed/cQ25hHAPZk0" class="rm-iframe rm-video-player"></iframe></div></li>
 </ul>
 `);
 });

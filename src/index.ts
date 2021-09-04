@@ -42,15 +42,15 @@ const defaultComponents = (component: string, afterColon?: string) => {
   switch (component) {
     case "youtube":
     case "video":
-      return `<iframe src="${opts
+      return `<div class="rm-iframe-container"><iframe src="${opts
         .replace("youtu.be", "www.youtube.com/embed")
         .replace("watch?v=", "embed/")
         .replace(
           "vimeo.com",
           "player.vimeo.com/video"
-        )}" class="rm-iframe rm-video-player"></iframe>`;
+        )}" class="rm-iframe rm-video-player"></iframe></div>`;
     case "pdf":
-      return `<iframe src="${opts}"></iframe>`;
+      return `<div class="rm-iframe-container"><iframe src="${opts}" class="rm-iframe"></iframe></div>`;
     default:
       return "";
   }
@@ -426,7 +426,7 @@ const opts = {
         return "<hr>";
       } else if (IFRAME_REGEX.test(text)) {
         const match = IFRAME_REGEX.exec(text);
-        return `<iframe src="${match?.[1]}" frameborder="0" height="100%" width="100%"></iframe>`;
+        return `<div class="rm-iframe-container"><iframe src="${match?.[1]}" frameborder="0" class="rm-iframe"></iframe></div>`;
       } else if (HIGHLIGHT_REGEX.test(text)) {
         const match = HIGHLIGHT_REGEX.exec(text);
         return `<span class="rm-highlight">${match?.[1]}</span>`;
