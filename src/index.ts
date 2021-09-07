@@ -446,7 +446,11 @@ const opts = {
         if (!blockRefInfo) {
           return text;
         }
-        return `<span class="rm-block-ref">${blockRefInfo.text}</span>`;
+        const href = context.pagesToHrefs?.(
+          blockRefInfo.page || "",
+          match
+        );
+        return `<a class="rm-block-ref" href="${href}">${blockRefInfo.text}</a>`;
       } else if (BQ_REGEX.test(text)) {
         const match = BQ_REGEX.exec(text);
         return `<blockquote class="rm-bq">${match?.[1]}</blockquote>`;

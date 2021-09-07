@@ -219,7 +219,7 @@ test("Render block references", () => {
   };
   fs.writeFileSync("debug.json", JSON.stringify(lexer(md, context), null, 4));
   expect(run(md, context)).toBe(`<ul>
-<li>A known reference <span class="rm-block-ref">A number block</span></li>
+<li>A known reference <a class="rm-block-ref" href="/number#123456789">A number block</a></li>
 <li>An unknown reference ((abcdefghi))</li>
 <li>A known alias reference <a class="rm-alias" href="/number#123456789">number alias</a></li>
 <li>An unknown alias reference letter alias</li>
@@ -328,7 +328,5 @@ test("Single tilde", () => {
 test("Special chars", () => {
   const md = "« So much happening! »";
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
-  expect(parseInline(md)).toBe(
-    `« So much happening! »`
-  );
+  expect(parseInline(md)).toBe(`« So much happening! »`);
 });
