@@ -446,10 +446,7 @@ const opts = {
         if (!blockRefInfo) {
           return text;
         }
-        const href = context.pagesToHrefs?.(
-          blockRefInfo.page || "",
-          match
-        );
+        const href = context.pagesToHrefs?.(blockRefInfo.page || "", match);
         return `<a class="rm-block-ref" href="${href}">${blockRefInfo.text}</a>`;
       } else if (BQ_REGEX.test(text)) {
         const match = BQ_REGEX.exec(text);
