@@ -447,7 +447,7 @@ const opts = {
           return text;
         }
         const href = context.pagesToHrefs?.(blockRefInfo.page || "", match);
-        return `<a class="rm-block-ref" href="${href}#${match}">${parseInline(
+        return `<a class="rm-block-ref" href="${href}">${parseInline(
           blockRefInfo.text,
           context
         )}</a>`;
