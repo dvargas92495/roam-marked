@@ -237,6 +237,19 @@ const opts = {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore should accept boolean return value
     link(src) {
+      // hijacking link for html elements with tokens
+      for (const { rgx, title } of HTML_WITH_CHILD_REGEXES) {
+        const match = rgx.exec(src);
+        if (match) {
+          return {
+            type: "link",
+            raw: match[0],
+            text: match[1],
+            title,
+          };
+        }
+      }
+
       const context = this.context();
       if (TAG_REGEX.test(src)) {
         const match = XRegExp.matchRecursive(src, "#?\\[\\[", "\\]\\]", "i", {
@@ -352,19 +365,6 @@ const opts = {
             type: "text",
             raw,
             text,
-          };
-        }
-      }
-
-      // hijacking link for html elements with tokens
-      for (const { rgx, title } of HTML_WITH_CHILD_REGEXES) {
-        const match = rgx.exec(src);
-        if (match) {
-          return {
-            type: "link",
-            raw: match[0],
-            text: match[1],
-            title,
           };
         }
       }
