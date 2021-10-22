@@ -330,3 +330,9 @@ test("Special chars", () => {
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
   expect(parseInline(md)).toBe(`« So much happening! »`);
 });
+
+test("Special chars in inline code", () => {
+  const md = "The `build` has a `url/{{github.number}}`.";
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
+  expect(parseInline(md)).toBe(`The <code>build</code> has a <code>url/{{github.number}}</code>.`);
+});

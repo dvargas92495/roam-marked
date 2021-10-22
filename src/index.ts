@@ -162,57 +162,66 @@ const opts = {
     // @ts-ignore should accept boolean return value
     inlineText(src) {
       if (src === lastSrc) {
-        throw new Error(`Infinite loop on byte: ${src.charCodeAt(0)}`);
+        throw new Error(
+          `Infinite loop on byte: ${src.charCodeAt(0)} of string ${src}`
+        );
       }
       lastSrc = src;
       const match = INLINE_STOP_REGEX.exec(src);
       if (match) {
-        return {
-          type: "text",
-          raw: src.substring(0, match.index),
-          text: src.substring(0, match.index),
-        };
+        const raw = src.substring(0, match.index);
+        const numberOfTicks = (raw.match(/([^`]`|`[^`])/g) || []).length;
+        if (numberOfTicks % 2 === 0) {
+          return {
+            type: "text",
+            raw: src.substring(0, match.index),
+            text: src.substring(0, match.index),
+          };
+        }
       }
       const attribute = ATTRIBUTE_REGEX.exec(src);
       if (attribute) {
         const raw = attribute[0];
-        const page = attribute[1];
-        const href = this.context().pagesToHrefs?.(page);
-        const text = `${page}:`;
-        if (href) {
-          return {
-            type: "strong",
-            raw,
-            text,
-            tokens: [
-              {
-                type: "link",
-                raw: text,
-                text,
-                href,
-                tokens: [
-                  {
-                    type: "text",
-                    raw: text,
-                    text,
-                  },
-                ],
-              },
-            ],
-          };
-        } else {
-          return {
-            type: "strong",
-            raw,
-            text,
-            tokens: [
-              {
-                type: "text",
-                raw: text,
-                text,
-              },
-            ],
-          };
+        const numberOfTicks = (raw.match(/([^`]`|`[^`])/g) || []).length;
+        if (numberOfTicks % 2 === 0) {
+          const page = attribute[1];
+          const href = this.context().pagesToHrefs?.(page);
+          const text = `${page}:`;
+          if (href) {
+            return {
+              type: "strong",
+              raw,
+              text,
+              tokens: [
+                {
+                  type: "link",
+                  raw: text,
+                  text,
+                  href,
+                  tokens: [
+                    {
+                      type: "text",
+                      raw: text,
+                      text,
+                    },
+                  ],
+                },
+              ],
+            };
+          } else {
+            return {
+              type: "strong",
+              raw,
+              text,
+              tokens: [
+                {
+                  type: "text",
+                  raw: text,
+                  text,
+                },
+              ],
+            };
+          }
         }
       }
       return false;
