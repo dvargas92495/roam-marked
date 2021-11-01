@@ -457,7 +457,7 @@ const opts = {
         }
         const href = context.pagesToHrefs?.(blockRefInfo.page || "", match);
         return `<a class="rm-block-ref" href="${href}">${parseInline(
-          blockRefInfo.text || '',
+          blockRefInfo.text || "",
           context
         )}</a>`;
       } else if (BQ_REGEX.test(text)) {
