@@ -11,7 +11,7 @@
   "homepage": "https://github.com/dvargas92495/roam-marked",
   "scripts": {
     "prebuild": "npm t",
-    "build": "ncc build src/index.ts -o dist",
+    "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint . --ext .ts",
     "prepublishOnly": "npm run build",
@@ -32,7 +32,6 @@
     "@types/refractor": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^4.12.0",
     "@typescript-eslint/parser": "^4.12.0",
-    "@vercel/ncc": "^0.26.1",
     "eslint": "^7.17.0",
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
