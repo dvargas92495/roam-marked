@@ -1,7 +1,26 @@
 import marked, { Lexer } from "marked";
 import XRegExp from "xregexp";
 import refractor from "refractor";
+import markdown from "refractor/lang/markdown";
+import yaml from "refractor/lang/yaml";
+import css from "refractor/lang/css";
+import bash from "refractor/lang/bash";
+import java from "refractor/lang/java";
+import rust from "refractor/lang/rust";
+import python from "refractor/lang/python";
+import csharp from "refractor/lang/csharp";
+import clojure from "refractor/lang/clojure";
 import toHtml from "hast-util-to-html";
+
+refractor.register(markdown);
+refractor.register(yaml);
+refractor.register(css);
+refractor.register(bash);
+refractor.register(java);
+refractor.register(rust);
+refractor.register(python);
+refractor.register(csharp);
+refractor.register(clojure);
 
 const RENDERED_TODO =
   '<span><label class="check-container"><input type="checkbox" disabled=""><span class="checkmark"></span></label></span>';
@@ -432,7 +451,7 @@ if (!(twttr && twttr.ready)) {
   var s = document.createElement('script');
   s.setAttribute('src', "https://platform.twitter.com/widgets.js");
   s.onload = renderTweet;
-  document.body.appendChild(s)l
+  document.body.appendChild(s);
 } else {
   renderTweet()
 }
