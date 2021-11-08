@@ -406,8 +406,47 @@ const opts = {
         return `<blockquote class="rm-bq">${text}</blockquote>`;
       } else if (href.startsWith("https://twitter.com") && text === href) {
         const tweetId = TWEET_STATUS_REGEX.exec(href)?.[1];
+        const options = {
+          dnt: false,
+          frame: false,
+          hideCard: false,
+          hideThread: true,
+          id: tweetId,
+          lang: "en",
+          theme: "light",
+          width: "550px",
+        };
         if (tweetId) {
-          return `<iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: 550px; height: 550px; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?dnt=false&amp;frame=false&amp;hideCard=false&amp;hideThread=true&amp;id=${tweetId}&amp;lang=en&amp;theme=light&amp;width=550px" data-tweet-id="${tweetId}"></iframe>`;
+          return `<div>
+  <script>const cs = document.currentScript;
+const tweetId = cs.nextElementSibling.getAttribute('data-tweet-id');
+const render = () => {
+  cs.parentElement.innerHTML = "";
+  window['twttr'].ready().then(({widgets}) => 
+    widgets.createTweetEmbed(tweetId, cs.parentElement, ${JSON.stringify(
+      options
+    )}));
+}
+const twttr = window['twttr']
+if (!(twttr && twttr.ready)) {
+  var s = document.createElement('script');
+  s.setAttribute('src', "https://platform.twitter.com/widgets.js");
+  s.onload = renderTweet;
+  document.body.appendChild(s)l
+} else {
+  renderTweet()
+}
+</script>
+  <iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: ${
+    options.width
+  }; height: 550px; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?${new URLSearchParams(
+            Object.fromEntries(
+              Object.entries(options).map(([k, v]) => [k, `${v}`])
+            )
+          )
+            .toString()
+            .replace(/&/g, "&amp;")}" data-tweet-id="${tweetId}"></iframe>
+</div>`;
         }
       }
       return false;
