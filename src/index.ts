@@ -437,8 +437,19 @@ const opts = {
         };
         if (tweetId) {
           return `<div>
+  <iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: ${
+    options.width
+  }; height: ${
+            options.width
+          }; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?${new URLSearchParams(
+            Object.fromEntries(
+              Object.entries(options).map(([k, v]) => [k, `${v}`])
+            )
+          )
+            .toString()
+            .replace(/&/g, "&amp;")}" data-tweet-id="${tweetId}"></iframe>
   <script>const cs = document.currentScript;
-const iframe = cs.nextElementSibling;
+const iframe = cs.previousElementSibling;
 const tweetId = iframe.getAttribute('data-tweet-id');
 const renderTweet = () => {
   const container = cs.parentElement;
@@ -462,17 +473,6 @@ if (!(twttr && twttr.ready)) {
   renderTweet()
 }
 </script>
-  <iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: ${
-    options.width
-  }; height: ${
-            options.width
-          }; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?${new URLSearchParams(
-            Object.fromEntries(
-              Object.entries(options).map(([k, v]) => [k, `${v}`])
-            )
-          )
-            .toString()
-            .replace(/&/g, "&amp;")}" data-tweet-id="${tweetId}"></iframe>
 </div>`;
         }
       }
