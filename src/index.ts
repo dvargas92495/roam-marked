@@ -438,13 +438,19 @@ const opts = {
         if (tweetId) {
           return `<div>
   <script>const cs = document.currentScript;
-const tweetId = cs.nextElementSibling.getAttribute('data-tweet-id');
-const render = () => {
-  cs.parentElement.innerHTML = "";
+const iframe = cs.nextElementSibling;
+const tweetId = iframe.getAttribute('data-tweet-id');
+const renderTweet = () => {
+  const container = cs.parentElement;
+  container.style.height = '${options.width}';
   window['twttr'].ready().then(({widgets}) => 
     widgets.createTweetEmbed(tweetId, cs.parentElement, ${JSON.stringify(
       options
-    )}));
+    )})).then(() => {
+      iframe.remove();
+      cs.remove();
+      container.style.height = 'unset';
+    });
 }
 const twttr = window['twttr']
 if (!(twttr && twttr.ready)) {
@@ -458,7 +464,7 @@ if (!(twttr && twttr.ready)) {
 </script>
   <iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: ${
     options.width
-  }; height: 550px; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?${new URLSearchParams(
+  }; height: ${options.width}; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?${new URLSearchParams(
             Object.fromEntries(
               Object.entries(options).map(([k, v]) => [k, `${v}`])
             )
