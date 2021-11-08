@@ -464,7 +464,9 @@ if (!(twttr && twttr.ready)) {
 </script>
   <iframe scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="" style="position: static; visibility: visible; width: ${
     options.width
-  }; height: ${options.width}; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?${new URLSearchParams(
+  }; height: ${
+            options.width
+          }; display: block; flex-grow: 1; pointer-events: auto;" title="Twitter Tweet" src="https://platform.twitter.com/embed/Tweet.html?${new URLSearchParams(
             Object.fromEntries(
               Object.entries(options).map(([k, v]) => [k, `${v}`])
             )
