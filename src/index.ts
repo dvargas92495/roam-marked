@@ -10,6 +10,7 @@ import rust from "refractor/lang/rust";
 import python from "refractor/lang/python";
 import csharp from "refractor/lang/csharp";
 import clojure from "refractor/lang/clojure";
+import hcl from "refractor/lang/hcl";
 import toHtml from "hast-util-to-html";
 
 refractor.register(markdown);
@@ -21,6 +22,7 @@ refractor.register(rust);
 refractor.register(python);
 refractor.register(csharp);
 refractor.register(clojure);
+refractor.register(hcl);
 
 const RENDERED_TODO =
   '<span><label class="check-container"><input type="checkbox" disabled=""><span class="checkmark"></span></label></span>';
@@ -189,12 +191,14 @@ const opts = {
       const match = INLINE_STOP_REGEX.exec(src);
       if (match) {
         const raw = src.substring(0, match.index);
-        const numberOfTicks = (raw.match(/([^`]`|`[^`])/g) || []).length;
+        const tickMatch = raw.match(/([^`]`|`[^`])/g);
+        const numberOfTicks = (tickMatch || []).length;
         if (numberOfTicks % 2 === 0) {
+          const index = numberOfTicks > 0 ? /`/.exec(raw)?.index : match.index;
           return {
             type: "text",
-            raw: src.substring(0, match.index),
-            text: src.substring(0, match.index),
+            raw: src.substring(0, index),
+            text: src.substring(0, index),
           };
         }
       }

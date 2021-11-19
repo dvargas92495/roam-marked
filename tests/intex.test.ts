@@ -336,3 +336,9 @@ test("Special chars in inline code", () => {
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
   expect(parseInline(md)).toBe(`The <code>build</code> has a <code>url/{{github.number}}</code>.`);
 });
+
+test("Inline before special Inline character", () => {
+  const md = "There is a RoamJS component called `PageInput`, which you could find as part of the [roamjs-components](https://github.com/dvargas92495/roamjs-components) library.";
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
+  expect(parseInline(md)).toBe(`There is a RoamJS component called <code>PageInput</code>, which you could find as part of the <a href="https://github.com/dvargas92495/roamjs-components">roamjs-components</a> library.`);
+});
