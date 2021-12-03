@@ -525,11 +525,11 @@ if (!(twttr && twttr.ready)) {
         if (!blockRefInfo) {
           return text;
         }
-        const href = context.pagesToHrefs?.(blockRefInfo.page || "", match);
-        return `<a class="rm-block-ref" href="${href}">${parseInline(
-          blockRefInfo.text || "",
-          context
-        )}</a>`;
+        const page = blockRefInfo.page || "";
+        const blockText = parseInline(blockRefInfo.text || "", context);
+        if (!page) return blockText;
+        const href = context.pagesToHrefs?.(page, match);
+        return `<a class="rm-block-ref" href="${href}">${blockText}</a>`;
       } else if (BQ_REGEX.test(text)) {
         const match = BQ_REGEX.exec(text);
         return `<blockquote class="rm-bq">${match?.[1]}</blockquote>`;

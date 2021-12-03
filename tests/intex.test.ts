@@ -203,6 +203,7 @@ test("Renders Roam Attributes", () => {
 test("Render block references", () => {
   const md = `- A known reference ((123456789))
 - An unknown reference ((abcdefghi))
+- An known with unknown page ((asdfghjkl))
 - A known alias reference [number alias](((123456789)))
 - An unknown alias reference [letter alias](((abcdefghi)))`;
   const pages: { [t: string]: string } = { Number: "/number" };
@@ -210,6 +211,10 @@ test("Render block references", () => {
     "123456789": {
       text: "A number block",
       page: "Number",
+    },
+    asdfghjkl: {
+      text: "linked content",
+      page: "",
     },
   };
   const context = {
@@ -221,6 +226,7 @@ test("Render block references", () => {
   expect(run(md, context)).toBe(`<ul>
 <li>A known reference <a class="rm-block-ref" href="/number#123456789">A number block</a></li>
 <li>An unknown reference ((abcdefghi))</li>
+<li>An known with unknown page linked content</li>
 <li>A known alias reference <a class="rm-alias" href="/number#123456789">number alias</a></li>
 <li>An unknown alias reference letter alias</li>
 </ul>
@@ -334,17 +340,25 @@ test("Special chars", () => {
 test("Special chars in inline code", () => {
   const md = "The `build` has a `url/{{github.number}}`.";
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
-  expect(parseInline(md)).toBe(`The <code>build</code> has a <code>url/{{github.number}}</code>.`);
+  expect(parseInline(md)).toBe(
+    `The <code>build</code> has a <code>url/{{github.number}}</code>.`
+  );
 });
 
 test("Inline before special Inline character", () => {
-  const md = "There is a RoamJS component called `PageInput`, which you could find as part of the [roamjs-components](https://github.com/dvargas92495/roamjs-components) library.";
+  const md =
+    "There is a RoamJS component called `PageInput`, which you could find as part of the [roamjs-components](https://github.com/dvargas92495/roamjs-components) library.";
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
-  expect(parseInline(md)).toBe(`There is a RoamJS component called <code>PageInput</code>, which you could find as part of the <a href="https://github.com/dvargas92495/roamjs-components">roamjs-components</a> library.`);
+  expect(parseInline(md)).toBe(
+    `There is a RoamJS component called <code>PageInput</code>, which you could find as part of the <a href="https://github.com/dvargas92495/roamjs-components">roamjs-components</a> library.`
+  );
 });
 
 test("Link weirdness", () => {
-  const md = "I have three links [distributed systems](https://en.wikipedia.org/wiki/Distributed_computing), [decentralized finance](https://en.wikipedia.org/wiki/Decentralized_finance), and [algorithmic trading]([[algorithmic trading]]). And another link [Martin](https://martin.ai/) and a final link [[Go]].";
+  const md =
+    "I have three links [distributed systems](https://en.wikipedia.org/wiki/Distributed_computing), [decentralized finance](https://en.wikipedia.org/wiki/Decentralized_finance), and [algorithmic trading]([[algorithmic trading]]). And another link [Martin](https://martin.ai/) and a final link [[Go]].";
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
-  expect(parseInline(md)).toBe(`I have three links <a href="https://en.wikipedia.org/wiki/Distributed_computing">distributed systems</a>, <a href="https://en.wikipedia.org/wiki/Decentralized_finance">decentralized finance</a>, and [algorithmic trading]([[algorithmic trading]]). And another link <a href="https://martin.ai/">Martin</a> and a final link [[Go]].`);
+  expect(parseInline(md)).toBe(
+    `I have three links <a href="https://en.wikipedia.org/wiki/Distributed_computing">distributed systems</a>, <a href="https://en.wikipedia.org/wiki/Decentralized_finance">decentralized finance</a>, and [algorithmic trading]([[algorithmic trading]]). And another link <a href="https://martin.ai/">Martin</a> and a final link [[Go]].`
+  );
 });
