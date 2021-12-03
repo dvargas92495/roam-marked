@@ -342,3 +342,9 @@ test("Inline before special Inline character", () => {
   fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
   expect(parseInline(md)).toBe(`There is a RoamJS component called <code>PageInput</code>, which you could find as part of the <a href="https://github.com/dvargas92495/roamjs-components">roamjs-components</a> library.`);
 });
+
+test("Link weirdness", () => {
+  const md = "I have three links [distributed systems](https://en.wikipedia.org/wiki/Distributed_computing), [decentralized finance](https://en.wikipedia.org/wiki/Decentralized_finance), and [algorithmic trading]([[algorithmic trading]]). And another link [Martin](https://martin.ai/) and a final link [[Go]].";
+  fs.writeFileSync("debug.json", JSON.stringify(inlineLexer(md), null, 4));
+  expect(parseInline(md)).toBe(`I have three links <a href="https://en.wikipedia.org/wiki/Distributed_computing">distributed systems</a>, <a href="https://en.wikipedia.org/wiki/Decentralized_finance">decentralized finance</a>, and [algorithmic trading]([[algorithmic trading]]). And another link <a href="https://martin.ai/">Martin</a> and a final link [[Go]].`);
+});
